@@ -1,5 +1,4 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Job, JobsQueryParams } from '../models/job.model';
 
@@ -151,12 +150,59 @@ const MOCK_JOBS: Job[] = [
   },
 ];
 
+export const ALL_TECHNOLOGIES = [...new Set(MOCK_JOBS.flatMap((j) => j.technologies))].sort();
+
 @Injectable({ providedIn: 'root' })
 export class JobsService {
-  private http = inject(HttpClient);
-
   getJobs(params?: JobsQueryParams): Observable<Job[]> {
-    return of(MOCK_JOBS);
+    let result = [...MOCK_JOBS];
+
+    if (params?.search) {
+      const q = params.search.toLowerCase();
+      result = result.filter(
+        (j) =>
+          j.title.toLowerCase().includes(q) ||
+          j.company.toLowerCase().includes(q) ||
+          j.technologies.some((t) => t.toLowerCase().includes(q)),
+      );
+    }
+
+    if (params?.location) {
+      const loc = params.location.toLowerCase();
+      result = result.filter((j) => j.location.toLowerCase().includes(loc));
+    }
+
+    if (params?.remote !== undefined) {
+      result = result.filter((j) => j.remote === params.remote);
+    }
+
+    if (params?.salaryMin !== undefined) {
+      result = result.filter((j) => j.salaryMax >= params.salaryMin!);
+    }
+
+    if (params?.salaryMax !== undefined) {
+      result = result.filter((j) => j.salaryMin <= params.salaryMax!);
+    }
+
+    if (params?.technologies?.length) {
+      result = result.filter((j) =>
+        params.technologies!.some((t) => j.technologies.includes(t)),
+      );
+    }
+
+    if (params?.level?.length) {
+      result = result.filter((j) => params.level!.includes(j.level));
+    }
+
+    if (params?.sort === 'salary_asc') {
+      result.sort((a, b) => a.salaryMin - b.salaryMin);
+    } else if (params?.sort === 'salary_desc') {
+      result.sort((a, b) => b.salaryMin - a.salaryMin);
+    } else {
+      result.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
+    }
+
+    return of(result);
   }
 
   getJobById(id: string): Observable<Job | undefined> {

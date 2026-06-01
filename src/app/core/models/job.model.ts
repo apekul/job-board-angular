@@ -22,6 +22,6 @@ export interface JobsQueryParams {
   salaryMin?: number;
   salaryMax?: number;
   technologies?: string[];
-  level?: 'junior' | 'mid' | 'senior';
-  sort?: string;
+  level?: ('junior' | 'mid' | 'senior')[];
+  sort?: 'newest' | 'salary_asc' | 'salary_desc';
 }
