@@ -1,0 +1,52 @@
+<header class="bg-gray-900 text-white">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <a routerLink="/jobs" class="text-lg font-bold text-white hover:text-gray-200">
+      Job Board
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden md:flex gap-6">
+      <a
+        routerLink="/jobs"
+        routerLinkActive="text-emerald-400"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="text-gray-300 hover:text-white transition-colors"
+      >Jobs</a>
+      <a
+        routerLink="/favorites"
+        routerLinkActive="text-emerald-400"
+        class="text-gray-300 hover:text-white transition-colors"
+      >Favorites</a>
+    </nav>
+
+    <!-- Hamburger (mobile only) -->
+    <button
+      class="md:hidden flex flex-col gap-1.5 p-2"
+      (click)="toggleMenu()"
+      aria-label="Toggle menu"
+    >
+      <span class="block w-6 h-0.5 bg-white"></span>
+      <span class="block w-6 h-0.5 bg-white"></span>
+      <span class="block w-6 h-0.5 bg-white"></span>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  @if (isMenuOpen()) {
+    <nav class="md:hidden bg-gray-800 px-4 py-3 flex flex-col gap-3">
+      <a
+        routerLink="/jobs"
+        routerLinkActive="text-emerald-400"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="text-gray-300 hover:text-white transition-colors"
+        (click)="toggleMenu()"
+      >Jobs</a>
+      <a
+        routerLink="/favorites"
+        routerLinkActive="text-emerald-400"
+        class="text-gray-300 hover:text-white transition-colors"
+        (click)="toggleMenu()"
+      >Favorites</a>
+    </nav>
+  }
+</header>
