@@ -2,19 +2,21 @@
   <!-- Loading skeleton -->
   @if (loading()) {
     <div class="animate-pulse">
-      <div class="h-4 bg-gray-200 rounded w-48 mb-6"></div>
-      <div class="bg-white rounded-xl border border-gray-200 p-6">
+      <div class="h-4 bg-gray-200 rounded w-48 mb-6 dark:bg-gray-800"></div>
+      <div
+        class="bg-white rounded-xl border border-gray-200 p-6 dark:bg-gray-900 dark:border-gray-800"
+      >
         <div class="flex items-center gap-4 mb-6">
-          <div class="w-16 h-16 rounded-xl bg-gray-200"></div>
+          <div class="w-16 h-16 rounded-xl bg-gray-200 dark:bg-gray-800"></div>
           <div>
-            <div class="h-6 bg-gray-200 rounded w-64 mb-2"></div>
-            <div class="h-4 bg-gray-200 rounded w-40"></div>
+            <div class="h-6 bg-gray-200 rounded w-64 mb-2 dark:bg-gray-800"></div>
+            <div class="h-4 bg-gray-200 rounded w-40 dark:bg-gray-800"></div>
           </div>
         </div>
         <div class="space-y-3">
-          <div class="h-4 bg-gray-200 rounded w-full"></div>
-          <div class="h-4 bg-gray-200 rounded w-5/6"></div>
-          <div class="h-4 bg-gray-200 rounded w-4/6"></div>
+          <div class="h-4 bg-gray-200 rounded w-full dark:bg-gray-800"></div>
+          <div class="h-4 bg-gray-200 rounded w-5/6 dark:bg-gray-800"></div>
+          <div class="h-4 bg-gray-200 rounded w-4/6 dark:bg-gray-800"></div>
         </div>
       </div>
     </div>
@@ -22,8 +24,10 @@
 
   <!-- Error state -->
   @if (!loading() && error()) {
-    <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-      <p class="text-red-700 mb-4">{{ error() }}</p>
+    <div
+      class="bg-red-50 border border-red-200 rounded-xl p-6 text-center dark:bg-red-900/20 dark:border-red-900/50"
+    >
+      <p class="text-red-700 mb-4 dark:text-red-300">{{ error() }}</p>
       <a
         routerLink="/jobs"
         class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium"
@@ -36,21 +40,29 @@
   <!-- Job detail -->
   @if (!loading() && !error() && job()) {
     <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6">
-      <a routerLink="/jobs" class="hover:text-gray-700 transition-colors">Jobs</a>
-      <span class="text-gray-300">›</span>
-      <span class="text-gray-800 font-medium truncate">{{ job()!.title }}</span>
+    <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6 dark:text-gray-400">
+      <a routerLink="/jobs" class="hover:text-gray-700 transition-colors dark:hover:text-gray-300"
+        >Jobs</a
+      >
+      <span class="text-gray-300 dark:text-gray-600">›</span>
+      <span class="text-gray-800 font-medium truncate dark:text-gray-200">{{ job()!.title }}</span>
     </nav>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Left: Description -->
       <div class="lg:col-span-2">
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
-          <h1 class="text-2xl font-bold text-gray-900 mb-1">{{ job()!.title }}</h1>
-          <p class="text-gray-500 mb-6">{{ job()!.company }} · {{ job()!.location }}</p>
+        <div
+          class="bg-white rounded-xl border border-gray-200 p-6 dark:bg-gray-900 dark:border-gray-800"
+        >
+          <h1 class="text-2xl font-bold text-gray-900 mb-1 dark:text-gray-100">
+            {{ job()!.title }}
+          </h1>
+          <p class="text-gray-500 mb-6 dark:text-gray-400">
+            {{ job()!.company }} · {{ job()!.location }}
+          </p>
 
           <div
-            class="prose prose-sm max-w-none text-gray-700"
+            class="prose prose-sm max-w-none text-gray-700 dark:text-gray-300"
             [innerHTML]="job()!.description"
           ></div>
         </div>
@@ -59,13 +71,15 @@
       <!-- Right: Info sidebar -->
       <div class="flex flex-col gap-4">
         <!-- Company info card -->
-        <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <div
+          class="bg-white rounded-xl border border-gray-200 p-5 dark:bg-gray-900 dark:border-gray-800"
+        >
           <div class="flex items-center gap-3 mb-4">
             @if (job()!.companyLogo) {
               <img
                 [src]="job()!.companyLogo"
                 [alt]="job()!.company + ' logo'"
-                class="w-12 h-12 rounded-lg object-contain border border-gray-100"
+                class="w-12 h-12 rounded-lg object-contain border border-gray-100 dark:border-gray-800"
               />
             } @else {
               <div
@@ -75,31 +89,31 @@
               </div>
             }
             <div>
-              <p class="font-semibold text-gray-900">{{ job()!.company }}</p>
-              <p class="text-sm text-gray-500">{{ job()!.location }}</p>
+              <p class="font-semibold text-gray-900 dark:text-gray-100">{{ job()!.company }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">{{ job()!.location }}</p>
             </div>
           </div>
 
           <dl class="space-y-3 text-sm">
             <div class="flex justify-between">
-              <dt class="text-gray-500">Work type</dt>
+              <dt class="text-gray-500 dark:text-gray-400">Work type</dt>
               <dd>
                 @switch (job()!.workMode) {
                   @case ('remote') {
                     <span
-                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700"
+                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
                       >Remote</span
                     >
                   }
                   @case ('onsite') {
                     <span
-                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600"
+                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
                       >Onsite</span
                     >
                   }
                   @case ('hybrid') {
                     <span
-                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700"
+                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
                       >Hybrid</span
                     >
                   }
@@ -107,24 +121,24 @@
               </dd>
             </div>
             <div class="flex justify-between">
-              <dt class="text-gray-500">Level</dt>
+              <dt class="text-gray-500 dark:text-gray-400">Level</dt>
               <dd>
                 @switch (job()!.level) {
                   @case ('junior') {
                     <span
-                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700"
+                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
                       >Junior</span
                     >
                   }
                   @case ('mid') {
                     <span
-                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700"
+                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300"
                       >Mid</span
                     >
                   }
                   @case ('senior') {
                     <span
-                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-700"
+                      class="text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
                       >Senior</span
                     >
                   }
@@ -132,8 +146,8 @@
               </dd>
             </div>
             <div class="flex justify-between">
-              <dt class="text-gray-500">Salary</dt>
-              <dd class="font-semibold text-gray-800">
+              <dt class="text-gray-500 dark:text-gray-400">Salary</dt>
+              <dd class="font-semibold text-gray-800 dark:text-gray-200">
                 {{ job()!.salaryMin | number }} – {{ job()!.salaryMax | number }}
                 {{ job()!.currency }}
               </dd>
@@ -142,11 +156,16 @@
         </div>
 
         <!-- Technologies card -->
-        <div class="bg-white rounded-xl border border-gray-200 p-5">
-          <h3 class="text-sm font-semibold text-gray-700 mb-3">Technologies</h3>
+        <div
+          class="bg-white rounded-xl border border-gray-200 p-5 dark:bg-gray-900 dark:border-gray-800"
+        >
+          <h3 class="text-sm font-semibold text-gray-700 mb-3 dark:text-gray-300">Technologies</h3>
           <div class="flex flex-wrap gap-2">
             @for (tech of job()!.technologies; track tech) {
-              <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-md">{{ tech }}</span>
+              <span
+                class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-300"
+                >{{ tech }}</span
+              >
             }
           </div>
         </div>
@@ -156,9 +175,11 @@
           @if (isAuthenticated()) {
             @if (applied()) {
               <div
-                class="flex items-center justify-between px-4 py-3 rounded-xl border border-emerald-200 bg-emerald-50"
+                class="flex items-center justify-between px-4 py-3 rounded-xl border border-emerald-200 bg-emerald-50 dark:border-emerald-900/50 dark:bg-emerald-900/20"
               >
-                <span class="text-sm font-semibold text-emerald-800">Applied</span>
+                <span class="text-sm font-semibold text-emerald-800 dark:text-emerald-300"
+                  >Applied</span
+                >
                 <span
                   class="text-xs font-medium px-2 py-0.5 rounded-full {{
                     statusBadgeClass(applied()!.status)
@@ -169,7 +190,7 @@
               </div>
               <a
                 routerLink="/applications"
-                class="w-full text-center px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+                class="w-full text-center px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
               >
                 View my applications
               </a>
@@ -196,7 +217,7 @@
             [href]="job()!.applyUrl || '#'"
             target="_blank"
             rel="noopener noreferrer"
-            class="w-full text-center px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+            class="w-full text-center px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
           >
             Apply Now
           </a>
