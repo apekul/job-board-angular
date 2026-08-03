@@ -4,7 +4,7 @@ A job board app inspired by JustJoinIT. Full-stack project: Angular + TailwindCS
 
 ## Live demo
 
-- Frontend: https://job-board-angular.vercel.app
+- Frontend: https://job-board-angular.vercel.app/jobs
 - API: https://job-board-angular.onrender.com
 
 ## Stack
