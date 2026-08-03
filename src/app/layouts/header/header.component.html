@@ -1,5 +1,5 @@
 <header class="bg-gray-900 text-white">
-  <div class="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+  <div class="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
     <a routerLink="/jobs" class="text-lg font-bold text-white hover:text-gray-200"> Job Board </a>
 
     <!-- Desktop nav -->
@@ -11,6 +11,47 @@
         class="text-gray-300 hover:text-white transition-colors"
         >Jobs</a
       >
+      @if (isAuthenticated()) {
+        <a
+          routerLink="/favorites"
+          routerLinkActive="text-emerald-400"
+          class="text-gray-300 hover:text-white transition-colors flex items-center gap-1.5"
+          >Favorites
+          @if (favoritesCount() > 0) {
+            <span
+              class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-emerald-500 text-white text-xs font-bold"
+            >
+              {{ favoritesCount() }}
+            </span>
+          }
+        </a>
+        <a
+          routerLink="/applications"
+          routerLinkActive="text-emerald-400"
+          class="text-gray-300 hover:text-white transition-colors"
+          >Applications</a
+        >
+      }
+      @if (isAuthenticated()) {
+        <button
+          type="button"
+          (click)="logout()"
+          class="text-gray-300 hover:text-white transition-colors text-sm"
+        >
+          {{ user()?.name || user()?.email }} · Logout
+        </button>
+      } @else {
+        <a routerLink="/login" class="text-gray-300 hover:text-white transition-colors">Login</a>
+        <a
+          routerLink="/register"
+          class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors"
+          >Sign up</a
+        >
+      }
+    </nav>
+
+    <!-- Right controls: theme toggle + hamburger (mobile only) -->
+    <div class="flex items-center gap-3">
       <button
         type="button"
         (click)="toggleTheme()"
@@ -53,55 +94,16 @@
           </svg>
         }
       </button>
-      @if (isAuthenticated()) {
-        <a
-          routerLink="/favorites"
-          routerLinkActive="text-emerald-400"
-          class="text-gray-300 hover:text-white transition-colors flex items-center gap-1.5"
-          >Favorites
-          @if (favoritesCount() > 0) {
-            <span
-              class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-emerald-500 text-white text-xs font-bold"
-            >
-              {{ favoritesCount() }}
-            </span>
-          }
-        </a>
-        <a
-          routerLink="/applications"
-          routerLinkActive="text-emerald-400"
-          class="text-gray-300 hover:text-white transition-colors"
-          >Applications</a
-        >
-      }
-      @if (isAuthenticated()) {
-        <button
-          type="button"
-          (click)="logout()"
-          class="text-gray-300 hover:text-white transition-colors text-sm"
-        >
-          {{ user()?.name || user()?.email }} · Logout
-        </button>
-      } @else {
-        <a routerLink="/login" class="text-gray-300 hover:text-white transition-colors">Login</a>
-        <a
-          routerLink="/register"
-          class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors"
-          >Sign up</a
-        >
-      }
-    </nav>
-
-    <!-- Hamburger (mobile only) -->
-    <button
-      class="md:hidden flex flex-col gap-1.5 p-2"
-      (click)="toggleMenu()"
-      aria-label="Toggle menu"
-    >
-      <span class="block w-6 h-0.5 bg-white"></span>
-      <span class="block w-6 h-0.5 bg-white"></span>
-      <span class="block w-6 h-0.5 bg-white"></span>
-    </button>
+      <button
+        class="md:hidden flex flex-col gap-1.5 p-2"
+        (click)="toggleMenu()"
+        aria-label="Toggle menu"
+      >
+        <span class="block w-6 h-0.5 bg-white"></span>
+        <span class="block w-6 h-0.5 bg-white"></span>
+        <span class="block w-6 h-0.5 bg-white"></span>
+      </button>
+    </div>
   </div>
 
   <!-- Mobile menu -->
@@ -160,14 +162,6 @@
           >Sign up</a
         >
       }
-      <button
-        type="button"
-        (click)="toggleTheme()"
-        [attr.aria-label]="isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
-        class="text-left text-gray-300 hover:text-white transition-colors"
-      >
-        {{ isDark() ? 'Switch to light mode' : 'Switch to dark mode' }}
-      </button>
     </nav>
   }
 </header>
