@@ -6,7 +6,7 @@ A job board app inspired by JustJoinIT. Full-stack project: Angular + TailwindCS
 
 | Layer | Tech | Hosting |
 |---|---|---|
-| Frontend | Angular 21 (standalone, Signals, SSR) + TailwindCSS | Vercel |
+| Frontend | Angular 21 (standalone, Signals, static prerendering) + TailwindCSS | Vercel |
 | Backend | Node.js + Express + TypeScript | Render |
 | Database | PostgreSQL | Neon |
 
@@ -70,7 +70,7 @@ The frontend expects the API at `http://localhost:4000/api` (configurable in `sr
 
 ## Deployment
 
-- **Vercel** — frontend (`ng build --configuration production`, output `dist/job-board/browser`)
+- **Vercel** — frontend (framework preset: Angular, `ng build --configuration production`, output `dist/job-board/browser`)
 - **Render** — backend (root directory `backend`, start `node dist/index.js`)
 - **Neon** — managed PostgreSQL
 
