@@ -3,11 +3,12 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { FavoritesService } from '../../core/services/favorites.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { SearchBarComponent } from '../../shared/search-bar/search-bar.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, SearchBarComponent],
   templateUrl: './header.component.html',
 })
 export class HeaderComponent {
@@ -29,6 +30,13 @@ export class HeaderComponent {
 
   toggleTheme() {
     this.themeService.toggle();
+  }
+
+  onSearch(value: string) {
+    this.router.navigate(['/jobs'], {
+      queryParams: { search: value || null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   logout() {

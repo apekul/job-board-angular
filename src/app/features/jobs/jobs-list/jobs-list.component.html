@@ -1,12 +1,4 @@
 <div class="py-8">
-  <!-- Search bar -->
-  <div class="mb-4">
-    <app-search-bar
-      [value]="currentFilters().search ?? ''"
-      (searchChange)="updateParams({ search: $event || undefined })"
-    />
-  </div>
-
   <div class="flex flex-col lg:flex-row gap-6">
     <!-- Filters sidebar -->
     <aside class="w-full lg:w-72 lg:flex-shrink-0">
