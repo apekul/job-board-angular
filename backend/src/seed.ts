@@ -295,8 +295,8 @@ const jobs: SeedJob[] = [
 
 async function main() {
   await pool.query(CREATE_USERS_TABLE);
-  await pool.query(CREATE_FAVORITES_TABLE);
   await pool.query(CREATE_JOBS_TABLE);
+  await pool.query(CREATE_FAVORITES_TABLE);
   await pool.query('DELETE FROM jobs');
 
   for (const job of jobs) {
