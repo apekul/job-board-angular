@@ -1,9 +1,9 @@
-import { Component, computed, effect, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs/operators';
 import { JobsQueryParams } from '../../../core/models/job.model';
-import { ALL_TECHNOLOGIES } from '../../../core/services/jobs.service';
+import { JobsService } from '../../../core/services/jobs.service';
 
 @Component({
   selector: 'app-filters',
@@ -15,17 +15,27 @@ export class FiltersComponent {
   filters = input<JobsQueryParams>({});
   filtersChange = output<JobsQueryParams>();
 
-  readonly allTechnologies = ALL_TECHNOLOGIES;
+  private jobsService = inject(JobsService);
+
+  readonly technologies = this.jobsService.technologies;
   readonly levels = ['junior', 'mid', 'senior'] as const;
+  readonly workModeOptions: { label: string; value: 'remote' | 'onsite' | 'hybrid' | undefined }[] = [
+    { label: 'All', value: undefined },
+    { label: 'Remote', value: 'remote' },
+    { label: 'Onsite', value: 'onsite' },
+    { label: 'Hybrid', value: 'hybrid' },
+  ];
   readonly sortOptions = [
     { value: 'newest', label: 'Newest' },
     { value: 'salary_asc', label: 'Salary: Low to High' },
     { value: 'salary_desc', label: 'Salary: High to Low' },
   ];
 
+  private fb = inject(FormBuilder);
+
   form = this.fb.group({
     location: [''],
-    remote: [undefined as boolean | undefined],
+    workMode: [undefined as ('remote' | 'onsite' | 'hybrid') | undefined],
     salaryMin: [undefined as number | undefined],
     salaryMax: [undefined as number | undefined],
     technologies: [[] as string[]],
@@ -37,7 +47,7 @@ export class FiltersComponent {
     const f = this.filters();
     let count = 0;
     if (f.location) count++;
-    if (f.remote !== undefined) count++;
+    if (f.workMode !== undefined) count++;
     if (f.salaryMin !== undefined) count++;
     if (f.salaryMax !== undefined) count++;
     if (f.technologies?.length) count++;
@@ -46,7 +56,9 @@ export class FiltersComponent {
     return count;
   });
 
-  constructor(private fb: FormBuilder) {
+  constructor() {
+    this.jobsService.loadTechnologies();
+
     this.form.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed())
       .subscribe(() => this.emit());
@@ -56,7 +68,7 @@ export class FiltersComponent {
       this.form.patchValue(
         {
           location: f.location ?? '',
-          remote: f.remote,
+          workMode: f.workMode,
           salaryMin: f.salaryMin,
           salaryMax: f.salaryMax,
           technologies: f.technologies ?? [],
@@ -68,8 +80,8 @@ export class FiltersComponent {
     });
   }
 
-  setRemote(value: boolean | undefined) {
-    this.form.patchValue({ remote: value });
+  setWorkMode(value: 'remote' | 'onsite' | 'hybrid' | undefined) {
+    this.form.patchValue({ workMode: value });
   }
 
   toggleTechnology(tech: string) {
@@ -96,7 +108,7 @@ export class FiltersComponent {
     const v = this.form.value;
     const params: JobsQueryParams = {};
     if (v.location) params.location = v.location;
-    if (v.remote !== undefined && v.remote !== null) params.remote = v.remote;
+    if (v.workMode) params.workMode = v.workMode;
     if (v.salaryMin != null) params.salaryMin = v.salaryMin;
     if (v.salaryMax != null) params.salaryMax = v.salaryMax;
     if (v.technologies?.length) params.technologies = v.technologies;

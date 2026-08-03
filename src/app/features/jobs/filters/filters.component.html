@@ -29,18 +29,18 @@
     />
   </div>
 
-  <!-- Remote -->
+  <!-- Work mode -->
   <div>
     <label class="block text-xs font-medium text-gray-600 mb-1">Work mode</label>
     <div class="flex gap-2">
-      @for (opt of [{label: 'All', value: undefined}, {label: 'Remote', value: true}, {label: 'Onsite', value: false}]; track opt.label) {
+      @for (opt of workModeOptions; track opt.label) {
         <button
           type="button"
-          (click)="setRemote(opt.value)"
-          [class.bg-blue-600]="form.value.remote === opt.value"
-          [class.text-white]="form.value.remote === opt.value"
-          [class.bg-gray-100]="form.value.remote !== opt.value"
-          [class.text-gray-600]="form.value.remote !== opt.value"
+          (click)="setWorkMode(opt.value)"
+          [class.bg-blue-600]="form.value.workMode === opt.value"
+          [class.text-white]="form.value.workMode === opt.value"
+          [class.bg-gray-100]="form.value.workMode !== opt.value"
+          [class.text-gray-600]="form.value.workMode !== opt.value"
           class="flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors hover:bg-blue-50"
         >
           {{ opt.label }}
@@ -75,7 +75,7 @@
   <div>
     <label class="block text-xs font-medium text-gray-600 mb-2">Technologies</label>
     <div class="flex flex-wrap gap-2">
-      @for (tech of allTechnologies; track tech) {
+      @for (tech of technologies(); track tech) {
         <button
           type="button"
           (click)="toggleTechnology(tech)"

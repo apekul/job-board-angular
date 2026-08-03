@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, computed, inject, signal, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs/operators';
@@ -28,6 +28,20 @@ export class JobsListComponent {
 
   currentFilters = signal<JobsQueryParams>({});
 
+  activeFiltersCount = computed(() => {
+    const f = this.currentFilters();
+    let count = 0;
+    if (f.search) count++;
+    if (f.location) count++;
+    if (f.workMode !== undefined) count++;
+    if (f.salaryMin !== undefined) count++;
+    if (f.salaryMax !== undefined) count++;
+    if (f.technologies?.length) count++;
+    if (f.level?.length) count++;
+    if (f.sort && f.sort !== 'newest') count++;
+    return count;
+  });
+
   constructor() {
     effect(() => {
       const raw = this.queryParams();
@@ -49,7 +63,7 @@ export class JobsListComponent {
   }
 
   updateParams(patch: Partial<JobsQueryParams>) {
-    const merged = { ...this.currentFilters(), ...patch };
+    const merged = Object.keys(patch).length === 0 ? {} : { ...this.currentFilters(), ...patch };
     const serialized = this.serializeParams(merged);
     this.router.navigate([], {
       relativeTo: this.route,
@@ -67,9 +81,8 @@ export class JobsListComponent {
     const location = raw.get('location');
     if (location) params.location = location;
 
-    const remote = raw.get('remote');
-    if (remote === 'true') params.remote = true;
-    else if (remote === 'false') params.remote = false;
+    const workMode = raw.get('workMode') as JobsQueryParams['workMode'];
+    if (workMode) params.workMode = workMode;
 
     const salaryMin = raw.get('salaryMin');
     if (salaryMin) params.salaryMin = Number(salaryMin);
@@ -93,7 +106,7 @@ export class JobsListComponent {
     const result: Record<string, string | string[]> = {};
     if (params.search) result['search'] = params.search;
     if (params.location) result['location'] = params.location;
-    if (params.remote !== undefined) result['remote'] = String(params.remote);
+    if (params.workMode) result['workMode'] = params.workMode;
     if (params.salaryMin !== undefined) result['salaryMin'] = String(params.salaryMin);
     if (params.salaryMax !== undefined) result['salaryMax'] = String(params.salaryMax);
     if (params.technologies?.length) result['technologies'] = params.technologies;
