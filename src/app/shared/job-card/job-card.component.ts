@@ -34,7 +34,7 @@ export class JobCardComponent {
   get relativeDate(): string {
     const posted = new Date(this.job().postedAt);
     const now = new Date();
-    const diffMs = now.getTime() - posted.getTime();
+    const diffMs = Math.max(0, now.getTime() - posted.getTime());
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) return 'Today';

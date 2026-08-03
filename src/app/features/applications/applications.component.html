@@ -1,0 +1,102 @@
+<div class="py-8">
+  <h1 class="text-2xl font-bold text-gray-900 mb-6">My applications</h1>
+
+  @if (applications().length === 0) {
+    <div
+      class="w-full min-h-80 bg-gray-50 border border-gray-200 rounded-xl flex flex-col items-center justify-center text-center px-6"
+    >
+      <p class="text-gray-500 text-lg">No applications yet.</p>
+      <p class="text-gray-400 text-sm mt-1">Apply to a job offer to track its status here.</p>
+      <a
+        routerLink="/jobs"
+        class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+      >
+        Browse jobs
+      </a>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-5">
+      @for (application of applications(); track application.id) {
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="flex flex-col lg:flex-row lg:items-start gap-4">
+            <!-- Job info -->
+            <div class="flex-1 min-w-0">
+              <a
+                [routerLink]="['/jobs', application.jobId]"
+                class="text-base font-semibold text-gray-900 hover:text-emerald-700 transition-colors"
+              >
+                {{ application.job.title }}
+              </a>
+              <p class="mt-1 text-sm text-gray-500 flex items-center gap-2 flex-wrap">
+                <span class="font-medium text-gray-700">{{ application.job.company }}</span>
+                <span class="text-gray-300">•</span>
+                <span>{{ application.job.location }}</span>
+                <span class="text-gray-300">•</span>
+                <span
+                  >{{ application.job.salaryMin | number }} –
+                  {{ application.job.salaryMax | number }} {{ application.job.currency }}</span
+                >
+              </p>
+              <div class="mt-2 flex flex-wrap gap-2">
+                @for (tech of application.job.technologies.slice(0, 4); track tech) {
+                  <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-md">{{
+                    tech
+                  }}</span>
+                }
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="flex flex-col items-start lg:items-end gap-3">
+              <span
+                class="text-xs font-medium px-2.5 py-1 rounded-full {{
+                  statusBadgeClass(application.status)
+                }}"
+              >
+                {{ statusLabels[application.status] }}
+              </span>
+
+              <div class="flex gap-1.5">
+                @for (status of statuses; track status) {
+                  <button
+                    type="button"
+                    (click)="updateStatus(application, status)"
+                    [disabled]="application.status === status"
+                    [class]="
+                      application.status === status
+                        ? 'px-2.5 py-1 rounded-lg text-xs font-medium ' +
+                          statusBadgeClass(status) +
+                          ' cursor-default'
+                        : 'px-2.5 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors'
+                    "
+                  >
+                    {{ statusLabels[status] }}
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- History -->
+          @if (application.events.length > 1) {
+            <div class="mt-4 pt-4 border-t border-gray-100">
+              <p class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
+                History
+              </p>
+              <ol class="flex flex-col gap-1.5">
+                @for (event of application.events; track $index) {
+                  <li class="flex items-center gap-2 text-xs text-gray-500">
+                    <span class="w-1.5 h-1.5 rounded-full bg-gray-300 flex-shrink-0"></span>
+                    <span class="font-medium text-gray-700">{{ statusLabels[event.status] }}</span>
+                    <span class="text-gray-300">·</span>
+                    <span>{{ relativeDate(event.createdAt) }}</span>
+                  </li>
+                }
+              </ol>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
