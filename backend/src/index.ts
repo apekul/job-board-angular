@@ -7,6 +7,7 @@ import { technologiesRouter } from './routes/technologies.js';
 import { authRouter } from './routes/auth.js';
 import { favoritesRouter } from './routes/favorites.js';
 import { applicationsRouter } from './routes/applications.js';
+import { companiesRouter } from './routes/companies.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -26,6 +27,7 @@ app.use('/api/technologies', technologiesRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/favorites', favoritesRouter);
 app.use('/api/applications', applicationsRouter);
+app.use('/api/companies', companiesRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found', status: 404 });

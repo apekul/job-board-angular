@@ -55,7 +55,18 @@
 
       <!-- Company + location -->
       <div class="mt-1 flex items-center gap-3 text-sm text-gray-500 flex-wrap dark:text-gray-400">
-        <span class="font-medium text-gray-700 dark:text-gray-300">{{ job().company }}</span>
+        @if (job().companySlug) {
+          <a
+            [routerLink]="['/companies', job().companySlug]"
+            (click)="$event.stopPropagation()"
+            (keydown.enter)="$event.stopPropagation()"
+            (keydown.space)="$event.stopPropagation()"
+            class="font-medium text-gray-700 hover:text-emerald-700 dark:text-gray-300 dark:hover:text-emerald-400"
+            >{{ job().company }}</a
+          >
+        } @else {
+          <span class="font-medium text-gray-700 dark:text-gray-300">{{ job().company }}</span>
+        }
         <span class="text-gray-300 dark:text-gray-600">•</span>
         <span>{{ job().location }}</span>
         @switch (job().workMode) {

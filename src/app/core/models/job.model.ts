@@ -2,6 +2,7 @@ export interface Job {
   id: string;
   title: string;
   company: string;
+  companySlug?: string | null;
   companyLogo?: string;
   location: string;
   workMode: 'remote' | 'onsite' | 'hybrid';

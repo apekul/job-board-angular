@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { MainLayout } from './layouts/app-layout/main.layout';
 import { authGuard } from './core/guards/auth.guard';
+import { companyResolver } from './core/resolvers/company.resolver';
 
 export const routes: Routes = [
   {
@@ -19,6 +20,12 @@ export const routes: Routes = [
           import('./features/jobs/job-detail/job-detail.component').then(
             (m) => m.JobDetailComponent,
           ),
+      },
+      {
+        path: 'companies/:slug',
+        resolve: { company: companyResolver },
+        loadComponent: () =>
+          import('./features/companies/company-page.component').then((m) => m.CompanyPageComponent),
       },
       {
         path: 'favorites',
