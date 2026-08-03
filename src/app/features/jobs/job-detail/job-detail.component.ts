@@ -3,11 +3,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { JobsService } from '../../../core/services/jobs.service';
 import { Job } from '../../../core/models/job.model';
+import { FavoriteButtonComponent } from '../../../shared/favorite-button/favorite-button.component';
 
 @Component({
   selector: 'app-job-detail',
   standalone: true,
-  imports: [RouterLink, DecimalPipe],
+  imports: [RouterLink, DecimalPipe, FavoriteButtonComponent],
   templateUrl: './job-detail.component.html',
 })
 export class JobDetailComponent implements OnInit {
@@ -40,13 +41,5 @@ export class JobDetailComponent implements OnInit {
         this.loading.set(false);
       },
     });
-  }
-
-  saveToFavorites() {
-    const job = this.job();
-    if (job) {
-      console.log('Save to favorites:', job.id);
-      alert(`"${job.title}" saved to favorites! (placeholder)`);
-    }
   }
 }

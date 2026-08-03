@@ -1,0 +1,28 @@
+<button
+  type="button"
+  (click)="$event.stopPropagation(); toggle()"
+  [attr.aria-label]="isFavorite() ? 'Remove from favorites' : 'Add to favorites'"
+  [attr.aria-pressed]="isFavorite()"
+  [class]="
+    label()
+      ? 'w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border font-medium transition-colors active:scale-95 ' +
+        (isFavorite()
+          ? 'text-red-500 border-red-200 hover:bg-red-50'
+          : 'text-gray-700 border-gray-300 hover:bg-gray-50')
+      : 'flex-shrink-0 p-2 -m-2 rounded-full transition-transform active:scale-75 ' +
+        (isFavorite() ? 'text-red-500' : 'text-gray-400 hover:text-red-500')
+  "
+>
+  <svg
+    [class]="isFavorite() ? 'h-5 w-5 fill-current' : 'h-5 w-5 fill-none stroke-current'"
+    viewBox="0 0 24 24"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+  </svg>
+  @if (label()) {
+    <span>{{ isFavorite() ? 'Saved' : label() }}</span>
+  }
+</button>

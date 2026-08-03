@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { FavoritesService } from '../../core/services/favorites.service';
 
 @Component({
   selector: 'app-header',
@@ -9,6 +10,11 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class HeaderComponent {
   isMenuOpen = signal(false);
+
+  private favoritesService = inject(FavoritesService);
+
+  favoritesCount = this.favoritesService.count;
+
   toggleMenu() {
     this.isMenuOpen.update((v) => !v);
   }

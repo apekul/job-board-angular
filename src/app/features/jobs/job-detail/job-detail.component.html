@@ -1,4 +1,4 @@
-<div class="max-w-4xl mx-auto px-4 py-8">
+<div class="py-8">
 
   <!-- Loading skeleton -->
   @if (loading()) {
@@ -75,10 +75,16 @@
             <div class="flex justify-between">
               <dt class="text-gray-500">Work type</dt>
               <dd>
-                @if (job()!.remote) {
-                  <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Remote</span>
-                } @else {
-                  <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">Onsite</span>
+                @switch (job()!.workMode) {
+                  @case ('remote') {
+                    <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Remote</span>
+                  }
+                  @case ('onsite') {
+                    <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">Onsite</span>
+                  }
+                  @case ('hybrid') {
+                    <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Hybrid</span>
+                  }
                 }
               </dd>
             </div>
@@ -127,12 +133,7 @@
           >
             Apply Now
           </a>
-          <button
-            (click)="saveToFavorites()"
-            class="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
-          >
-            Save to Favorites
-          </button>
+          <app-favorite-button [jobId]="job()!.id" [label]="'Save to favorites'" />
         </div>
 
       </div>
