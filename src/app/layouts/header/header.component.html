@@ -1,28 +1,47 @@
 <header class="bg-gray-900 text-white">
   <div class="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-    <a routerLink="/jobs" class="text-lg font-bold text-white hover:text-gray-200">
-      Job Board
-    </a>
+    <a routerLink="/jobs" class="text-lg font-bold text-white hover:text-gray-200"> Job Board </a>
 
     <!-- Desktop nav -->
-    <nav class="hidden md:flex gap-6">
+    <nav class="hidden md:flex gap-6 items-center">
       <a
         routerLink="/jobs"
         routerLinkActive="text-emerald-400"
         [routerLinkActiveOptions]="{ exact: false }"
         class="text-gray-300 hover:text-white transition-colors"
-      >Jobs</a>
-      <a
-        routerLink="/favorites"
-        routerLinkActive="text-emerald-400"
-        class="text-gray-300 hover:text-white transition-colors flex items-center gap-1.5"
-      >Favorites
-        @if (favoritesCount() > 0) {
-          <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-emerald-500 text-white text-xs font-bold">
-            {{ favoritesCount() }}
-          </span>
-        }
-      </a>
+        >Jobs</a
+      >
+      @if (isAuthenticated()) {
+        <a
+          routerLink="/favorites"
+          routerLinkActive="text-emerald-400"
+          class="text-gray-300 hover:text-white transition-colors flex items-center gap-1.5"
+          >Favorites
+          @if (favoritesCount() > 0) {
+            <span
+              class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-emerald-500 text-white text-xs font-bold"
+            >
+              {{ favoritesCount() }}
+            </span>
+          }
+        </a>
+      }
+      @if (isAuthenticated()) {
+        <button
+          type="button"
+          (click)="logout()"
+          class="text-gray-300 hover:text-white transition-colors text-sm"
+        >
+          {{ user()?.name || user()?.email }} · Logout
+        </button>
+      } @else {
+        <a routerLink="/login" class="text-gray-300 hover:text-white transition-colors">Login</a>
+        <a
+          routerLink="/register"
+          class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors"
+          >Sign up</a
+        >
+      }
     </nav>
 
     <!-- Hamburger (mobile only) -->
@@ -46,19 +65,46 @@
         [routerLinkActiveOptions]="{ exact: false }"
         class="text-gray-300 hover:text-white transition-colors"
         (click)="toggleMenu()"
-      >Jobs</a>
-      <a
-        routerLink="/favorites"
-        routerLinkActive="text-emerald-400"
-        class="text-gray-300 hover:text-white transition-colors flex items-center gap-1.5"
-        (click)="toggleMenu()"
-      >Favorites
-        @if (favoritesCount() > 0) {
-          <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-emerald-500 text-white text-xs font-bold">
-            {{ favoritesCount() }}
-          </span>
-        }
-      </a>
+        >Jobs</a
+      >
+      @if (isAuthenticated()) {
+        <a
+          routerLink="/favorites"
+          routerLinkActive="text-emerald-400"
+          class="text-gray-300 hover:text-white transition-colors flex items-center gap-1.5"
+          (click)="toggleMenu()"
+          >Favorites
+          @if (favoritesCount() > 0) {
+            <span
+              class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-emerald-500 text-white text-xs font-bold"
+            >
+              {{ favoritesCount() }}
+            </span>
+          }
+        </a>
+      }
+      @if (isAuthenticated()) {
+        <button
+          type="button"
+          (click)="logout()"
+          class="text-left text-gray-300 hover:text-white transition-colors"
+        >
+          {{ user()?.name || user()?.email }} · Logout
+        </button>
+      } @else {
+        <a
+          routerLink="/login"
+          class="text-gray-300 hover:text-white transition-colors"
+          (click)="toggleMenu()"
+          >Login</a
+        >
+        <a
+          routerLink="/register"
+          class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors w-fit"
+          (click)="toggleMenu()"
+          >Sign up</a
+        >
+      }
     </nav>
   }
 </header>

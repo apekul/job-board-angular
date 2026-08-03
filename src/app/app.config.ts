@@ -5,12 +5,13 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { ssrTimeoutInterceptor } from './core/interceptors/ssr-timeout.interceptor';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([ssrTimeoutInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([ssrTimeoutInterceptor, authInterceptor])),
     provideClientHydration(withEventReplay()),
   ],
 };

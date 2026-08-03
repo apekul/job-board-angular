@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { MainLayout } from './layouts/app-layout/main.layout';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -10,23 +11,30 @@ export const routes: Routes = [
       {
         path: 'jobs',
         loadComponent: () =>
-          import('./features/jobs/jobs-list/jobs-list.component').then(
-            (m) => m.JobsListComponent
-          ),
+          import('./features/jobs/jobs-list/jobs-list.component').then((m) => m.JobsListComponent),
       },
       {
         path: 'jobs/:id',
         loadComponent: () =>
           import('./features/jobs/job-detail/job-detail.component').then(
-            (m) => m.JobDetailComponent
+            (m) => m.JobDetailComponent,
           ),
       },
       {
         path: 'favorites',
+        canActivate: [authGuard],
         loadComponent: () =>
-          import('./features/favorites/favorites.component').then(
-            (m) => m.FavoritesComponent
-          ),
+          import('./features/favorites/favorites.component').then((m) => m.FavoritesComponent),
+      },
+      {
+        path: 'login',
+        loadComponent: () =>
+          import('./features/auth/login.component').then((m) => m.LoginComponent),
+      },
+      {
+        path: 'register',
+        loadComponent: () =>
+          import('./features/auth/register.component').then((m) => m.RegisterComponent),
       },
     ],
   },

@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { pool } from './db/index.js';
-import { CREATE_JOBS_TABLE } from './db/schema.js';
+import { CREATE_JOBS_TABLE, CREATE_USERS_TABLE, CREATE_FAVORITES_TABLE } from './db/schema.js';
 
 type SeedJob = {
   title: string;
@@ -305,6 +305,8 @@ const jobs: SeedJob[] = [
 ];
 
 async function main() {
+  await pool.query(CREATE_USERS_TABLE);
+  await pool.query(CREATE_FAVORITES_TABLE);
   await pool.query(CREATE_JOBS_TABLE);
   await pool.query('DELETE FROM jobs');
 
