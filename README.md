@@ -2,6 +2,11 @@
 
 A job board app inspired by JustJoinIT. Full-stack project: Angular + TailwindCSS frontend, Express API backend, PostgreSQL database (Neon).
 
+## Live demo
+
+- Frontend: https://job-board-angular.vercel.app/jobs
+- API: https://job-board-angular.onrender.com
+
 ## Stack
 
 | Layer | Tech | Hosting |
@@ -76,4 +81,4 @@ The frontend expects the API at `http://localhost:4000/api` (configurable in `sr
 
 ## Project tracking
 
-Planned/implemented via [GitHub Issues](https://github.com/apekul/job-board-angular/issues) (epic #1 with sub-issues).
+Planned and implemented via [GitHub Issues](https://github.com/apekul/job-board-angular/issues) (epic #1 with sub-issues). All issues are closed — the project is complete.
