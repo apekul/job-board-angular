@@ -64,8 +64,7 @@ const jobs: SeedJob[] = [
     salaryMax: 20000,
     technologies: ['Vue.js', 'Node.js', 'MongoDB', 'GraphQL', 'AWS'],
     level: 'senior',
-    description:
-      '<p>Join us to build next-generation web applications across the full stack.</p>',
+    description: '<p>Join us to build next-generation web applications across the full stack.</p>',
     postedDaysAgo: 10,
   },
   {
@@ -116,8 +115,7 @@ const jobs: SeedJob[] = [
     salaryMax: 24000,
     technologies: ['Python', 'Spark', 'Airflow', 'Snowflake', 'SQL'],
     level: 'senior',
-    description:
-      '<p>Design and maintain data pipelines powering analytics across the company.</p>',
+    description: '<p>Design and maintain data pipelines powering analytics across the company.</p>',
     postedDaysAgo: 6,
   },
   {
@@ -129,8 +127,7 @@ const jobs: SeedJob[] = [
     salaryMax: 15000,
     technologies: ['Playwright', 'TypeScript', 'Cypress', 'CI/CD'],
     level: 'mid',
-    description:
-      '<p>Own the automated testing strategy for our web products using Playwright.</p>',
+    description: '<p>Own the automated testing strategy for our web products using Playwright.</p>',
     postedDaysAgo: 4,
   },
   {
@@ -142,8 +139,7 @@ const jobs: SeedJob[] = [
     salaryMax: 10000,
     technologies: ['Python', 'Django', 'PostgreSQL', 'Docker'],
     level: 'junior',
-    description:
-      '<p>Kickstart your career building backend services in Python and Django.</p>',
+    description: '<p>Kickstart your career building backend services in Python and Django.</p>',
     postedDaysAgo: 2,
   },
   {
@@ -155,8 +151,7 @@ const jobs: SeedJob[] = [
     salaryMax: 26000,
     technologies: ['Kubernetes', 'AWS', 'Go', 'Penetration Testing'],
     level: 'senior',
-    description:
-      '<p>Protect our infrastructure and applications from evolving threats.</p>',
+    description: '<p>Protect our infrastructure and applications from evolving threats.</p>',
     postedDaysAgo: 9,
   },
   {
@@ -181,8 +176,7 @@ const jobs: SeedJob[] = [
     salaryMax: 30000,
     technologies: ['AWS', 'Terraform', 'Kubernetes', 'CI/CD'],
     level: 'senior',
-    description:
-      '<p>Design cloud architectures that scale, with a focus on AWS and IaC.</p>',
+    description: '<p>Design cloud architectures that scale, with a focus on AWS and IaC.</p>',
     postedDaysAgo: 8,
   },
   {
@@ -194,8 +188,7 @@ const jobs: SeedJob[] = [
     salaryMax: 16000,
     technologies: ['Vue.js', 'TypeScript', 'Vite', 'TailwindCSS'],
     level: 'mid',
-    description:
-      '<p>Work on a design-heavy product with Vue 3 and a modern build stack.</p>',
+    description: '<p>Work on a design-heavy product with Vue 3 and a modern build stack.</p>',
     postedDaysAgo: 1,
   },
   {
@@ -220,8 +213,7 @@ const jobs: SeedJob[] = [
     salaryMax: 12000,
     technologies: ['Docker', 'Linux', 'GitHub Actions', 'AWS'],
     level: 'junior',
-    description:
-      '<p>Support our platform team with CI/CD pipelines and cloud infrastructure.</p>',
+    description: '<p>Support our platform team with CI/CD pipelines and cloud infrastructure.</p>',
     postedDaysAgo: 2,
   },
   {
@@ -259,8 +251,7 @@ const jobs: SeedJob[] = [
     salaryMax: 12000,
     technologies: ['WordPress', 'PHP', 'JavaScript', 'CSS'],
     level: 'junior',
-    description:
-      '<p>Build custom WordPress themes and plugins for our agency clients.</p>',
+    description: '<p>Build custom WordPress themes and plugins for our agency clients.</p>',
     postedDaysAgo: 6,
   },
   {
@@ -272,8 +263,7 @@ const jobs: SeedJob[] = [
     salaryMax: 28000,
     technologies: ['Python', 'PyTorch', 'MLOps', 'Docker'],
     level: 'senior',
-    description:
-      '<p>Bring ML models to production with a focus on MLOps and scalability.</p>',
+    description: '<p>Bring ML models to production with a focus on MLOps and scalability.</p>',
     postedDaysAgo: 3,
   },
   {
@@ -285,8 +275,7 @@ const jobs: SeedJob[] = [
     salaryMax: 13000,
     technologies: ['Markdown', 'Git', 'API Documentation', 'Docusaurus'],
     level: 'mid',
-    description:
-      '<p>Document APIs and developer tools with clarity and precision.</p>',
+    description: '<p>Document APIs and developer tools with clarity and precision.</p>',
     postedDaysAgo: 7,
   },
   {
@@ -306,8 +295,8 @@ const jobs: SeedJob[] = [
 
 async function main() {
   await pool.query(CREATE_USERS_TABLE);
-  await pool.query(CREATE_FAVORITES_TABLE);
   await pool.query(CREATE_JOBS_TABLE);
+  await pool.query(CREATE_FAVORITES_TABLE);
   await pool.query('DELETE FROM jobs');
 
   for (const job of jobs) {

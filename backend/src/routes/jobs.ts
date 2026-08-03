@@ -76,7 +76,10 @@ jobsRouter.get('/', async (req, res) => {
   const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
   const offset = (q.page - 1) * q.limit;
 
-  const [{ total }] = await query<{ total: number }>(`SELECT COUNT(*)::int AS total FROM jobs ${where}`, values);
+  const [{ total }] = await query<{ total: number }>(
+    `SELECT COUNT(*)::int AS total FROM jobs ${where}`,
+    values,
+  );
   const rows = await query<JobRow>(
     `SELECT * FROM jobs ${where} ORDER BY ${sortClause[q.sort]} LIMIT $${values.length + 1} OFFSET $${values.length + 2}`,
     [...values, q.limit, offset],

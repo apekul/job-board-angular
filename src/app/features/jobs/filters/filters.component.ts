@@ -19,12 +19,13 @@ export class FiltersComponent {
 
   readonly technologies = this.jobsService.technologies;
   readonly levels = ['junior', 'mid', 'senior'] as const;
-  readonly workModeOptions: { label: string; value: 'remote' | 'onsite' | 'hybrid' | undefined }[] = [
-    { label: 'All', value: undefined },
-    { label: 'Remote', value: 'remote' },
-    { label: 'Onsite', value: 'onsite' },
-    { label: 'Hybrid', value: 'hybrid' },
-  ];
+  readonly workModeOptions: { label: string; value: 'remote' | 'onsite' | 'hybrid' | undefined }[] =
+    [
+      { label: 'All', value: undefined },
+      { label: 'Remote', value: 'remote' },
+      { label: 'Onsite', value: 'onsite' },
+      { label: 'Hybrid', value: 'hybrid' },
+    ];
   readonly sortOptions = [
     { value: 'newest', label: 'Newest' },
     { value: 'salary_asc', label: 'Salary: Low to High' },
@@ -86,17 +87,13 @@ export class FiltersComponent {
 
   toggleTechnology(tech: string) {
     const current = this.form.value.technologies ?? [];
-    const next = current.includes(tech)
-      ? current.filter((t) => t !== tech)
-      : [...current, tech];
+    const next = current.includes(tech) ? current.filter((t) => t !== tech) : [...current, tech];
     this.form.patchValue({ technologies: next });
   }
 
   toggleLevel(level: string) {
     const current = this.form.value.level ?? [];
-    const next = current.includes(level)
-      ? current.filter((l) => l !== level)
-      : [...current, level];
+    const next = current.includes(level) ? current.filter((l) => l !== level) : [...current, level];
     this.form.patchValue({ level: next });
   }
 

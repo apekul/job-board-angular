@@ -16,7 +16,9 @@
           class="w-12 h-12 rounded-lg object-contain border border-gray-100"
         />
       } @else {
-        <div class="w-12 h-12 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-sm">
+        <div
+          class="w-12 h-12 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-sm"
+        >
           {{ initials }}
         </div>
       }
@@ -29,13 +31,22 @@
         <h3 class="text-base font-semibold text-gray-900 leading-tight">{{ job().title }}</h3>
         @switch (job().level) {
           @case ('junior') {
-            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 whitespace-nowrap">Junior</span>
+            <span
+              class="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 whitespace-nowrap"
+              >Junior</span
+            >
           }
           @case ('mid') {
-            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 whitespace-nowrap">Mid</span>
+            <span
+              class="text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 whitespace-nowrap"
+              >Mid</span
+            >
           }
           @case ('senior') {
-            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-700 whitespace-nowrap">Senior</span>
+            <span
+              class="text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-700 whitespace-nowrap"
+              >Senior</span
+            >
           }
         }
       </div>
@@ -47,13 +58,20 @@
         <span>{{ job().location }}</span>
         @switch (job().workMode) {
           @case ('remote') {
-            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Remote</span>
+            <span
+              class="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700"
+              >Remote</span
+            >
           }
           @case ('onsite') {
-            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">Onsite</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600"
+              >Onsite</span
+            >
           }
           @case ('hybrid') {
-            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Hybrid</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700"
+              >Hybrid</span
+            >
           }
         }
       </div>
@@ -69,7 +87,9 @@
           <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-md">{{ tech }}</span>
         }
         @if (extraTechnologiesCount > 0) {
-          <span class="text-xs px-2 py-1 bg-gray-100 text-gray-400 rounded-md">+{{ extraTechnologiesCount }} more</span>
+          <span class="text-xs px-2 py-1 bg-gray-100 text-gray-400 rounded-md"
+            >+{{ extraTechnologiesCount }} more</span
+          >
         }
       </div>
     </div>
