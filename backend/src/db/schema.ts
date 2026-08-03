@@ -1,8 +1,21 @@
+export const CREATE_COMPANIES_TABLE = `
+  CREATE TABLE IF NOT EXISTS companies (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(200) NOT NULL UNIQUE,
+    slug VARCHAR(200) NOT NULL UNIQUE,
+    description TEXT,
+    website VARCHAR(500),
+    logo VARCHAR(500),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+`;
+
 export const CREATE_JOBS_TABLE = `
   CREATE TABLE IF NOT EXISTS jobs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(200) NOT NULL,
     company VARCHAR(200) NOT NULL,
+    company_id UUID REFERENCES companies(id) ON DELETE SET NULL,
     company_logo VARCHAR(500),
     location VARCHAR(200) NOT NULL,
     work_mode VARCHAR(20) NOT NULL,
@@ -15,6 +28,10 @@ export const CREATE_JOBS_TABLE = `
     apply_url VARCHAR(500),
     posted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   );
+`;
+
+export const ALTER_JOBS_ADD_COMPANY_ID = `
+  ALTER TABLE jobs ADD COLUMN IF NOT EXISTS company_id UUID REFERENCES companies(id) ON DELETE SET NULL;
 `;
 
 export const CREATE_USERS_TABLE = `
@@ -69,6 +86,8 @@ export interface JobRow {
   id: string;
   title: string;
   company: string;
+  company_id: string | null;
+  company_slug: string | null;
   company_logo: string | null;
   location: string;
   work_mode: (typeof WORK_MODES)[number];
@@ -80,6 +99,20 @@ export interface JobRow {
   description: string;
   apply_url: string | null;
   posted_at: string;
+}
+
+export interface CompanyRow {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  website: string | null;
+  logo: string | null;
+  created_at: string;
+}
+
+export interface CompanySummaryRow extends CompanyRow {
+  jobs_count: number;
 }
 
 export interface ApplicationRow {
@@ -107,11 +140,23 @@ export function toUser(row: UserRow) {
   };
 }
 
+export function toCompany(row: CompanyRow) {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    description: row.description,
+    website: row.website,
+    logo: row.logo,
+  };
+}
+
 export function toJob(row: JobRow) {
   return {
     id: row.id,
     title: row.title,
     company: row.company,
+    companySlug: row.company_slug,
     companyLogo: row.company_logo,
     location: row.location,
     workMode: row.work_mode,

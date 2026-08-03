@@ -1,0 +1,117 @@
+<div class="py-8">
+  <!-- Loading skeleton -->
+  @if (loading()) {
+    <div class="animate-pulse">
+      <div
+        class="bg-white rounded-xl border border-gray-200 p-6 dark:bg-gray-900 dark:border-gray-800"
+      >
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-xl bg-gray-200 dark:bg-gray-800"></div>
+          <div class="flex-1">
+            <div class="h-6 bg-gray-200 rounded w-48 mb-2 dark:bg-gray-800"></div>
+            <div class="h-4 bg-gray-200 rounded w-64 dark:bg-gray-800"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (!loading() && error()) {
+    <div
+      class="bg-red-50 border border-red-200 rounded-xl p-6 text-center dark:bg-red-900/20 dark:border-red-900/50"
+    >
+      <p class="text-red-700 mb-4 dark:text-red-300">{{ error() }}</p>
+      <a
+        routerLink="/jobs"
+        class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium"
+      >
+        Back to Jobs
+      </a>
+    </div>
+  }
+
+  <!-- Company detail -->
+  @if (!loading() && !error() && company()) {
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6 dark:text-gray-400">
+      <a routerLink="/jobs" class="hover:text-gray-700 transition-colors dark:hover:text-gray-300"
+        >Jobs</a
+      >
+      <span class="text-gray-300 dark:text-gray-600">›</span>
+      <span class="text-gray-800 font-medium truncate dark:text-gray-200">{{
+        company()!.name
+      }}</span>
+    </nav>
+
+    <!-- Hero -->
+    <div
+      class="bg-white rounded-xl border border-gray-200 p-6 dark:bg-gray-900 dark:border-gray-800"
+    >
+      <div class="flex items-start gap-4 flex-wrap">
+        @if (company()!.logo) {
+          <img
+            [src]="company()!.logo"
+            [alt]="company()!.name + ' logo'"
+            class="w-16 h-16 rounded-xl object-contain border border-gray-100 dark:border-gray-800"
+          />
+        } @else {
+          <div
+            class="w-16 h-16 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold text-xl"
+          >
+            {{ initials }}
+          </div>
+        }
+        <div class="flex-1 min-w-0">
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ company()!.name }}</h1>
+          @if (company()!.website) {
+            <a
+              [href]="company()!.website"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+            >
+              {{ company()!.website }}
+            </a>
+          }
+          @if (company()!.description) {
+            <p class="mt-3 text-gray-600 dark:text-gray-300 max-w-2xl">
+              {{ company()!.description }}
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Jobs -->
+    <div class="mt-8 flex items-center justify-between flex-wrap gap-2">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+        Open positions
+        <span class="text-sm font-normal text-gray-500 dark:text-gray-400"
+          >({{ company()!.jobs.length }})</span
+        >
+      </h2>
+      <a
+        [routerLink]="['/jobs']"
+        [queryParams]="{ search: company()!.name }"
+        class="text-sm font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+      >
+        View all jobs at {{ company()!.name }} →
+      </a>
+    </div>
+
+    @if (company()!.jobs.length === 0) {
+      <div
+        class="mt-4 w-full min-h-40 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center text-center px-6 dark:bg-gray-900 dark:border-gray-800"
+      >
+        <p class="text-gray-500 dark:text-gray-400">No open positions right now.</p>
+      </div>
+    } @else {
+      <div class="mt-4 grid gap-5 items-stretch grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
+        @for (job of company()!.jobs; track job.id) {
+          <app-job-card [job]="job" />
+        }
+      </div>
+    }
+  }
+</div>

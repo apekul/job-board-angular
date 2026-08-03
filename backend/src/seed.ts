@@ -1,11 +1,13 @@
 import 'dotenv/config';
-import { pool } from './db/index.js';
+import { pool, query } from './db/index.js';
 import {
+  CREATE_COMPANIES_TABLE,
   CREATE_JOBS_TABLE,
   CREATE_USERS_TABLE,
   CREATE_FAVORITES_TABLE,
   CREATE_APPLICATIONS_TABLE,
   CREATE_APPLICATION_EVENTS_TABLE,
+  ALTER_JOBS_ADD_COMPANY_ID,
 } from './db/schema.js';
 
 type SeedJob = {
@@ -299,22 +301,50 @@ const jobs: SeedJob[] = [
   },
 ];
 
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 async function main() {
   await pool.query(CREATE_USERS_TABLE);
+  await pool.query(CREATE_COMPANIES_TABLE);
   await pool.query(CREATE_JOBS_TABLE);
+  await pool.query(ALTER_JOBS_ADD_COMPANY_ID);
   await pool.query(CREATE_FAVORITES_TABLE);
   await pool.query(CREATE_APPLICATIONS_TABLE);
   await pool.query(CREATE_APPLICATION_EVENTS_TABLE);
   await pool.query('DELETE FROM jobs');
 
+  const companyNames = [...new Set(jobs.map((job) => job.company))];
+  for (const name of companyNames) {
+    await pool.query(
+      `INSERT INTO companies (name, slug, description, website)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (name) DO NOTHING`,
+      [
+        name,
+        slugify(name),
+        `${name} is hiring across engineering, design and product roles. Visit the website to learn more.`,
+        'https://example.com',
+      ],
+    );
+  }
+
+  const companyRows = await query<{ id: string; name: string }>('SELECT id, name FROM companies');
+  const companyIdByName = new Map(companyRows.map((row) => [row.name, row.id]));
+
   for (const job of jobs) {
     await pool.query(
       `INSERT INTO jobs
-        (title, company, company_logo, location, work_mode, salary_min, salary_max, currency, technologies, level, description, apply_url, posted_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+        (title, company, company_id, company_logo, location, work_mode, salary_min, salary_max, currency, technologies, level, description, apply_url, posted_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
       [
         job.title,
         job.company,
+        companyIdByName.get(job.company) ?? null,
         null,
         job.location,
         job.workMode,

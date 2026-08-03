@@ -81,7 +81,8 @@ jobsRouter.get('/', async (req, res) => {
     values,
   );
   const rows = await query<JobRow>(
-    `SELECT * FROM jobs ${where} ORDER BY ${sortClause[q.sort]} LIMIT $${values.length + 1} OFFSET $${values.length + 2}`,
+    `SELECT j.*, (SELECT c.slug FROM companies c WHERE c.id = j.company_id) AS company_slug
+     FROM jobs j ${where} ORDER BY ${sortClause[q.sort]} LIMIT $${values.length + 1} OFFSET $${values.length + 2}`,
     [...values, q.limit, offset],
   );
 
@@ -90,13 +91,21 @@ jobsRouter.get('/', async (req, res) => {
 
 jobsRouter.post('/batch', async (req, res) => {
   const { ids } = batchSchema.parse(req.body);
-  const rows = await query<JobRow>('SELECT * FROM jobs WHERE id = ANY($1::uuid[])', [ids]);
+  const rows = await query<JobRow>(
+    `SELECT j.*, (SELECT c.slug FROM companies c WHERE c.id = j.company_id) AS company_slug
+     FROM jobs j WHERE j.id = ANY($1::uuid[])`,
+    [ids],
+  );
   res.json({ data: rows.map(toJob) });
 });
 
 jobsRouter.get('/:id', async (req, res) => {
   const id = z.string().uuid().parse(req.params.id);
-  const [row] = await query<JobRow>('SELECT * FROM jobs WHERE id = $1', [id]);
+  const [row] = await query<JobRow>(
+    `SELECT j.*, (SELECT c.slug FROM companies c WHERE c.id = j.company_id) AS company_slug
+     FROM jobs j WHERE j.id = $1`,
+    [id],
+  );
   if (!row) throw new HttpError(404, 'Job not found');
   res.json(toJob(row));
 });
