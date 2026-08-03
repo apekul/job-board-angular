@@ -153,15 +153,53 @@
 
         <!-- Actions -->
         <div class="flex flex-col gap-3">
+          @if (isAuthenticated()) {
+            @if (applied()) {
+              <div
+                class="flex items-center justify-between px-4 py-3 rounded-xl border border-emerald-200 bg-emerald-50"
+              >
+                <span class="text-sm font-semibold text-emerald-800">Applied</span>
+                <span
+                  class="text-xs font-medium px-2 py-0.5 rounded-full {{
+                    statusBadgeClass(applied()!.status)
+                  }}"
+                >
+                  {{ statusLabels[applied()!.status] }}
+                </span>
+              </div>
+              <a
+                routerLink="/applications"
+                class="w-full text-center px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+              >
+                View my applications
+              </a>
+            } @else {
+              <button
+                type="button"
+                (click)="apply()"
+                class="w-full px-4 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors"
+              >
+                Apply for this job
+              </button>
+            }
+          } @else {
+            <button
+              type="button"
+              (click)="apply()"
+              class="w-full px-4 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors"
+            >
+              Sign in to apply
+            </button>
+          }
+          <app-favorite-button [jobId]="job()!.id" [label]="'Save to favorites'" />
           <a
             [href]="job()!.applyUrl || '#'"
             target="_blank"
             rel="noopener noreferrer"
-            class="w-full text-center px-4 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors"
+            class="w-full text-center px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
           >
             Apply Now
           </a>
-          <app-favorite-button [jobId]="job()!.id" [label]="'Save to favorites'" />
         </div>
       </div>
     </div>

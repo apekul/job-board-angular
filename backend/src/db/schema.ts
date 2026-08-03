@@ -36,6 +36,31 @@ export const CREATE_FAVORITES_TABLE = `
   );
 `;
 
+export const CREATE_APPLICATIONS_TABLE = `
+  CREATE TABLE IF NOT EXISTS applications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+    status VARCHAR(20) NOT NULL DEFAULT 'applied'
+      CHECK (status IN ('applied', 'interview', 'offer', 'rejected')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (user_id, job_id)
+  );
+`;
+
+export const CREATE_APPLICATION_EVENTS_TABLE = `
+  CREATE TABLE IF NOT EXISTS application_events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    application_id UUID NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
+    status VARCHAR(20) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+`;
+
+export const APPLICATION_STATUSES = ['applied', 'interview', 'offer', 'rejected'] as const;
+export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
+
 export const WORK_MODES = ['remote', 'onsite', 'hybrid'] as const;
 export const LEVELS = ['junior', 'mid', 'senior'] as const;
 export const SORTS = ['newest', 'salary_asc', 'salary_desc'] as const;
@@ -55,6 +80,15 @@ export interface JobRow {
   description: string;
   apply_url: string | null;
   posted_at: string;
+}
+
+export interface ApplicationRow {
+  id: string;
+  user_id: string;
+  job_id: string;
+  status: ApplicationStatus;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface UserRow {
