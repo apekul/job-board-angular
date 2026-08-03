@@ -1,5 +1,5 @@
 <header class="bg-gray-900 text-white">
-  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+  <div class="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
     <a routerLink="/jobs" class="text-lg font-bold text-white hover:text-gray-200">
       Job Board
     </a>
@@ -15,8 +15,14 @@
       <a
         routerLink="/favorites"
         routerLinkActive="text-emerald-400"
-        class="text-gray-300 hover:text-white transition-colors"
-      >Favorites</a>
+        class="text-gray-300 hover:text-white transition-colors flex items-center gap-1.5"
+      >Favorites
+        @if (favoritesCount() > 0) {
+          <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-emerald-500 text-white text-xs font-bold">
+            {{ favoritesCount() }}
+          </span>
+        }
+      </a>
     </nav>
 
     <!-- Hamburger (mobile only) -->
@@ -33,7 +39,7 @@
 
   <!-- Mobile menu -->
   @if (isMenuOpen()) {
-    <nav class="md:hidden bg-gray-800 px-4 py-3 flex flex-col gap-3">
+    <nav class="md:hidden bg-gray-800 px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-3">
       <a
         routerLink="/jobs"
         routerLinkActive="text-emerald-400"
@@ -44,9 +50,15 @@
       <a
         routerLink="/favorites"
         routerLinkActive="text-emerald-400"
-        class="text-gray-300 hover:text-white transition-colors"
+        class="text-gray-300 hover:text-white transition-colors flex items-center gap-1.5"
         (click)="toggleMenu()"
-      >Favorites</a>
+      >Favorites
+        @if (favoritesCount() > 0) {
+          <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-emerald-500 text-white text-xs font-bold">
+            {{ favoritesCount() }}
+          </span>
+        }
+      </a>
     </nav>
   }
 </header>

@@ -2,11 +2,12 @@ import { Component, input, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Job } from '../../core/models/job.model';
+import { FavoriteButtonComponent } from '../favorite-button/favorite-button.component';
 
 @Component({
   selector: 'app-job-card',
   standalone: true,
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, FavoriteButtonComponent],
   templateUrl: './job-card.component.html',
 })
 export class JobCardComponent {

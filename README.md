@@ -1,59 +1,79 @@
-# JobBoard
+# Job Board
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.13.
+A job board app inspired by JustJoinIT. Full-stack project: Angular + TailwindCSS frontend, Express API backend, PostgreSQL database (Neon).
 
-## Development server
+## Stack
 
-To start a local development server, run:
+| Layer | Tech | Hosting |
+|---|---|---|
+| Frontend | Angular 21 (standalone, Signals, SSR) + TailwindCSS | Vercel |
+| Backend | Node.js + Express + TypeScript | Render |
+| Database | PostgreSQL | Neon |
 
-```bash
-ng serve
+## Features
+
+- Job listings with cards (company logo, salary, technologies, level, work mode, relative date)
+- Search and filters (location, work mode, salary range, technologies, level, sort) synced with the URL
+- Job detail pages with "Apply" link
+- Favorites saved to `localStorage` (heart button, count badge in header, `/favorites` page)
+- Full-width, responsive layout
+
+## Structure
+
+```
+src/app/
+  core/           # services (jobs, favorites), models
+  shared/         # reusable components (job-card, search-bar, filters button...)
+  features/
+    jobs/         # list, filters, detail
+    favorites/    # favorites page
+  layouts/        # header, footer, main layout
+backend/
+  src/
+    db/           # schema + connection
+    routes/       # jobs, technologies
+    middleware/   # error handler
+    seed.ts       # seeds 22 sample jobs
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Getting started
 
-## Code scaffolding
+Prerequisites: Node.js >= 20, a PostgreSQL database (e.g. free [Neon](https://neon.tech) project).
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### 1. Backend
 
 ```bash
-ng generate --help
+cd backend
+npm install
+cp .env.example .env    # set DATABASE_URL, FRONTEND_URL
+npm run seed            # create table + seed 22 jobs
+npm run dev             # http://localhost:4000
 ```
 
-## Building
-
-To build the project run:
+### 2. Frontend
 
 ```bash
-ng build
+npm install
+npm start               # http://localhost:4200
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+The frontend expects the API at `http://localhost:4000/api` (configurable in `src/environments/`).
 
-## Running unit tests
+## API
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/jobs` | List with filters + pagination (`search`, `location`, `workMode`, `salaryMin`, `salaryMax`, `technologies`, `level`, `sort`, `page`, `limit`) |
+| GET | `/api/jobs/:id` | Job detail (400 for invalid UUID, 404 if missing) |
+| POST | `/api/jobs/batch` | Fetch jobs by `{ ids: string[] }` |
+| GET | `/api/technologies` | Distinct technologies for filter chips |
 
-```bash
-ng test
-```
+## Deployment
 
-## Running end-to-end tests
+- **Vercel** — frontend (`ng build --configuration production`, output `dist/job-board/browser`)
+- **Render** — backend (root directory `backend`, start `node dist/index.js`)
+- **Neon** — managed PostgreSQL
 
-For end-to-end (e2e) testing, run:
+## Project tracking
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Planned/implemented via [GitHub Issues](https://github.com/apekul/job-board-angular/issues) (epic #1 with sub-issues).

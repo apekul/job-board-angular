@@ -1,0 +1,127 @@
+<div class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4" [formGroup]="form">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <span class="text-sm font-semibold text-gray-700">
+      Filters
+      @if (activeCount() > 0) {
+        <span class="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold">
+          {{ activeCount() }}
+        </span>
+      }
+    </span>
+    @if (activeCount() > 0) {
+      <button type="button" (click)="clearFilters()"
+        class="text-xs text-blue-600 hover:text-blue-800 transition-colors font-medium">
+        Clear all
+      </button>
+    }
+  </div>
+
+  <!-- Location -->
+  <div>
+    <label class="block text-xs font-medium text-gray-600 mb-1">Location</label>
+    <input
+      formControlName="location"
+      type="text"
+      placeholder="e.g. Warsaw"
+      class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+    />
+  </div>
+
+  <!-- Work mode -->
+  <div>
+    <label class="block text-xs font-medium text-gray-600 mb-1">Work mode</label>
+    <div class="flex gap-2">
+      @for (opt of workModeOptions; track opt.label) {
+        <button
+          type="button"
+          (click)="setWorkMode(opt.value)"
+          [class.bg-blue-600]="form.value.workMode === opt.value"
+          [class.text-white]="form.value.workMode === opt.value"
+          [class.bg-gray-100]="form.value.workMode !== opt.value"
+          [class.text-gray-600]="form.value.workMode !== opt.value"
+          class="flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors hover:bg-blue-50"
+        >
+          {{ opt.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Salary -->
+  <div>
+    <label class="block text-xs font-medium text-gray-600 mb-1">Salary (PLN/month)</label>
+    <div class="flex gap-2 items-center">
+      <input
+        formControlName="salaryMin"
+        type="number"
+        placeholder="Min"
+        min="0"
+        class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+      />
+      <span class="text-gray-400 text-sm">–</span>
+      <input
+        formControlName="salaryMax"
+        type="number"
+        placeholder="Max"
+        min="0"
+        class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+      />
+    </div>
+  </div>
+
+  <!-- Technologies -->
+  <div>
+    <label class="block text-xs font-medium text-gray-600 mb-2">Technologies</label>
+    <div class="flex flex-wrap gap-2">
+      @for (tech of technologies(); track tech) {
+        <button
+          type="button"
+          (click)="toggleTechnology(tech)"
+          [class.bg-blue-600]="(form.value.technologies ?? []).includes(tech)"
+          [class.text-white]="(form.value.technologies ?? []).includes(tech)"
+          [class.bg-gray-100]="!(form.value.technologies ?? []).includes(tech)"
+          [class.text-gray-600]="!(form.value.technologies ?? []).includes(tech)"
+          class="px-2.5 py-1 rounded-full text-xs font-medium transition-colors hover:bg-blue-50"
+        >
+          {{ tech }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Level -->
+  <div>
+    <label class="block text-xs font-medium text-gray-600 mb-2">Experience level</label>
+    <div class="flex gap-2">
+      @for (lvl of levels; track lvl) {
+        <button
+          type="button"
+          (click)="toggleLevel(lvl)"
+          [class.bg-blue-600]="(form.value.level ?? []).includes(lvl)"
+          [class.text-white]="(form.value.level ?? []).includes(lvl)"
+          [class.bg-gray-100]="!(form.value.level ?? []).includes(lvl)"
+          [class.text-gray-600]="!(form.value.level ?? []).includes(lvl)"
+          class="flex-1 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors hover:bg-blue-50"
+        >
+          {{ lvl }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Sort -->
+  <div>
+    <label class="block text-xs font-medium text-gray-600 mb-1">Sort by</label>
+    <select
+      formControlName="sort"
+      class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white"
+    >
+      @for (opt of sortOptions; track opt.value) {
+        <option [value]="opt.value">{{ opt.label }}</option>
+      }
+    </select>
+  </div>
+
+</div>

@@ -4,7 +4,7 @@ export interface Job {
   company: string;
   companyLogo?: string;
   location: string;
-  remote: boolean;
+  workMode: 'remote' | 'onsite' | 'hybrid';
   salaryMin: number;
   salaryMax: number;
   currency: string;
@@ -18,10 +18,10 @@ export interface Job {
 export interface JobsQueryParams {
   search?: string;
   location?: string;
-  remote?: boolean;
+  workMode?: 'remote' | 'onsite' | 'hybrid';
   salaryMin?: number;
   salaryMax?: number;
   technologies?: string[];
-  level?: 'junior' | 'mid' | 'senior';
-  sort?: string;
+  level?: ('junior' | 'mid' | 'senior')[];
+  sort?: 'newest' | 'salary_asc' | 'salary_desc';
 }
