@@ -1,27 +1,50 @@
-import { Injectable, computed, signal } from '@angular/core';
-
-const STORAGE_KEY = 'job-board:favorites';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class FavoritesService {
-  readonly favorites = signal<string[]>(this.load());
+  private http = inject(HttpClient);
+  private auth = inject(AuthService);
+
+  private readonly apiUrl = environment.apiUrl;
+
+  readonly favorites = signal<string[]>([]);
 
   readonly count = computed(() => this.favorites().length);
+
+  constructor() {
+    effect(() => {
+      if (this.auth.isAuthenticated()) {
+        this.refresh();
+      } else {
+        this.favorites.set([]);
+      }
+    });
+  }
 
   isFavorite(id: string): boolean {
     return this.favorites().includes(id);
   }
 
+  refresh(): void {
+    this.http.get<{ data: string[] }>(`${this.apiUrl}/favorites`).subscribe({
+      next: (res) => this.favorites.set(res.data),
+      error: () => this.favorites.set([]),
+    });
+  }
+
   add(id: string): void {
-    if (!this.isFavorite(id)) {
-      this.favorites.update((ids) => [...ids, id]);
-      this.save();
-    }
+    this.http.post<{ data: string }>(`${this.apiUrl}/favorites`, { jobId: id }).subscribe({
+      next: () => this.favorites.update((ids) => (ids.includes(id) ? ids : [...ids, id])),
+    });
   }
 
   remove(id: string): void {
-    this.favorites.update((ids) => ids.filter((i) => i !== id));
-    this.save();
+    this.http.delete(`${this.apiUrl}/favorites/${id}`).subscribe({
+      next: () => this.favorites.update((ids) => ids.filter((i) => i !== id)),
+    });
   }
 
   toggle(id: string): void {
@@ -30,18 +53,5 @@ export class FavoritesService {
     } else {
       this.add(id);
     }
-  }
-
-  private load(): string[] {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as string[]) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  private save(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.favorites()));
   }
 }

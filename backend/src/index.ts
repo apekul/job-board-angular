@@ -4,6 +4,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { jobsRouter } from './routes/jobs.js';
 import { technologiesRouter } from './routes/technologies.js';
+import { authRouter } from './routes/auth.js';
+import { favoritesRouter } from './routes/favorites.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -20,6 +22,8 @@ app.use(morgan('dev'));
 
 app.use('/api/jobs', jobsRouter);
 app.use('/api/technologies', technologiesRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/favorites', favoritesRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found', status: 404 });

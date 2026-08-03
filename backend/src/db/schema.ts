@@ -17,6 +17,25 @@ export const CREATE_JOBS_TABLE = `
   );
 `;
 
+export const CREATE_USERS_TABLE = `
+  CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(100),
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+`;
+
+export const CREATE_FAVORITES_TABLE = `
+  CREATE TABLE IF NOT EXISTS favorites (
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (user_id, job_id)
+  );
+`;
+
 export const WORK_MODES = ['remote', 'onsite', 'hybrid'] as const;
 export const LEVELS = ['junior', 'mid', 'senior'] as const;
 export const SORTS = ['newest', 'salary_asc', 'salary_desc'] as const;
@@ -36,6 +55,22 @@ export interface JobRow {
   description: string;
   apply_url: string | null;
   posted_at: string;
+}
+
+export interface UserRow {
+  id: string;
+  email: string;
+  name: string | null;
+  password_hash: string;
+  created_at: string;
+}
+
+export function toUser(row: UserRow) {
+  return {
+    id: row.id,
+    email: row.email,
+    name: row.name,
+  };
 }
 
 export function toJob(row: JobRow) {
