@@ -10,13 +10,12 @@ test.describe('Jobs list', () => {
   test('filters jobs by search query', async ({ page }) => {
     await page.goto('/jobs');
 
-    await page.getByPlaceholder('Search jobs, companies, technologies...').fill('Angular');
+    const search = page.getByPlaceholder('Search jobs, companies, technologies...').first();
+    await search.fill('Angular');
     await expect(page.getByRole('article').first()).toBeVisible();
     await expect(page.getByText('No job offers found.')).toBeHidden();
 
-    await page
-      .getByPlaceholder('Search jobs, companies, technologies...')
-      .fill('zzz-no-such-offer');
+    await search.fill('zzz-no-such-offer');
     await expect(page.getByText('No job offers found.')).toBeVisible();
   });
 
