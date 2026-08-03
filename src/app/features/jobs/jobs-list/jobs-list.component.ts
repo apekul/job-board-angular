@@ -24,7 +24,9 @@ export class JobsListComponent {
   loading = signal(true);
   error = signal<string | null>(null);
 
-  private queryParams = toSignal(this.route.queryParamMap, { initialValue: this.route.snapshot.queryParamMap });
+  private queryParams = toSignal(this.route.queryParamMap, {
+    initialValue: this.route.snapshot.queryParamMap,
+  });
 
   currentFilters = signal<JobsQueryParams>({});
 

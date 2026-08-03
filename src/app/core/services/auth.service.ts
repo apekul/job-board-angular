@@ -1,4 +1,4 @@
-import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { Injectable, PLATFORM_ID, afterNextRender, computed, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
@@ -63,7 +63,9 @@ export class AuthService {
       this.user.set(null);
     }
 
-    this.fetchMe().subscribe({ error: () => this.logout() });
+    afterNextRender(() => {
+      this.fetchMe().subscribe({ error: () => this.logout() });
+    });
   }
 
   private setSession(res: AuthResponse): void {

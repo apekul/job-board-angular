@@ -26,7 +26,8 @@ export class JobsService {
     if (params.workMode) httpParams = httpParams.set('workMode', params.workMode);
     if (params.salaryMin !== undefined) httpParams = httpParams.set('salaryMin', params.salaryMin);
     if (params.salaryMax !== undefined) httpParams = httpParams.set('salaryMax', params.salaryMax);
-    for (const tech of params.technologies ?? []) httpParams = httpParams.append('technologies', tech);
+    for (const tech of params.technologies ?? [])
+      httpParams = httpParams.append('technologies', tech);
     for (const lvl of params.level ?? []) httpParams = httpParams.append('level', lvl);
     if (params.sort) httpParams = httpParams.set('sort', params.sort);
 
