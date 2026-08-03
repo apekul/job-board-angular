@@ -6,13 +6,12 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { JobsService } from '../../../core/services/jobs.service';
 import { Job, JobsQueryParams } from '../../../core/models/job.model';
 import { JobCardComponent } from '../../../shared/job-card/job-card.component';
-import { SearchBarComponent } from '../../../shared/search-bar/search-bar.component';
 import { FiltersComponent } from '../filters/filters.component';
 
 @Component({
   selector: 'app-jobs-list',
   standalone: true,
-  imports: [JobCardComponent, SearchBarComponent, FiltersComponent],
+  imports: [JobCardComponent, FiltersComponent],
   templateUrl: './jobs-list.component.html',
 })
 export class JobsListComponent {
