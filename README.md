@@ -117,4 +117,4 @@ GitHub Actions runs formatting check, backend typecheck, unit tests, build and P
 
 ## Project tracking
 
-Planned and implemented via [GitHub Issues](https://github.com/apekul/job-board-angular/issues). Implemented: #14 auth + server favorites, #16 E2E + CI, #17 application tracking, #19 infinite scroll / cursor pagination, #20 dark mode, #21 company pages, #22 unit tests (services + components). Remaining: #15 AI match, #18 job alerts, #23 API hardening, #24 PWA.
+Planned and implemented via [GitHub Issues](https://github.com/apekul/job-board-angular/issues). Implemented: #14 auth + server favorites, #16 E2E + CI, #17 application tracking, #19 infinite scroll / cursor pagination, #20 dark mode, #21 company pages, #22 unit tests (services + components), #23 API hardening (rate limiting + cache). Remaining: #15 AI match, #18 job alerts.

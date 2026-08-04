@@ -3,6 +3,23 @@ import { z } from 'zod';
 import { query } from '../db/index.js';
 import { toJob, type JobRow } from '../db/schema.js';
 import { HttpError } from '../middleware/errorHandler.js';
+import { cacheGet, cacheSet } from '../lib/cache.js';
+
+const JOBS_CACHE_TTL_SECONDS = 60;
+
+function cacheKeyFor(q: Record<string, unknown>): string {
+  const params = new URLSearchParams();
+  for (const key of Object.keys(q).sort()) {
+    const value = q[key];
+    if (value === undefined) continue;
+    if (Array.isArray(value)) {
+      for (const item of value) params.append(key, String(item));
+    } else {
+      params.append(key, String(value));
+    }
+  }
+  return params.toString();
+}
 
 function splitList(value: unknown) {
   if (Array.isArray(value)) return value;
@@ -68,6 +85,15 @@ export const jobsRouter = Router();
 jobsRouter.get('/', async (req, res) => {
   const q = jobsQuerySchema.parse(req.query);
 
+  const cacheKey = `jobs:${cacheKeyFor(q)}`;
+  const cached = await cacheGet<{ data: JobRow[]; nextCursor: string | null; hasMore: boolean }>(
+    cacheKey,
+  );
+  if (cached) {
+    res.json(cached);
+    return;
+  }
+
   const conditions: string[] = [];
   const values: unknown[] = [];
 
@@ -125,7 +151,10 @@ jobsRouter.get('/', async (req, res) => {
   const last = page[page.length - 1];
   const nextCursor = hasMore && last ? encodeCursor(last[sortField[q.sort]], last.id) : null;
 
-  res.json({ data: page.map(toJob), nextCursor, hasMore });
+  const body = { data: page.map(toJob), nextCursor, hasMore };
+  await cacheSet(cacheKey, body, JOBS_CACHE_TTL_SECONDS);
+
+  res.json(body);
 });
 
 jobsRouter.post('/batch', async (req, res) => {
