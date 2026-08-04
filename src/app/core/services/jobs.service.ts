@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { Job, JobsQueryParams } from '../models/job.model';
+import { Job, JobPage, JobsQueryParams } from '../models/job.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -19,8 +19,8 @@ export class JobsService {
     });
   }
 
-  getJobs(params: JobsQueryParams = {}): Observable<Job[]> {
-    let httpParams = new HttpParams().set('limit', '50');
+  getJobs(params: JobsQueryParams = {}, cursor?: string | null): Observable<JobPage> {
+    let httpParams = new HttpParams().set('limit', '12');
     if (params.search) httpParams = httpParams.set('search', params.search);
     if (params.location) httpParams = httpParams.set('location', params.location);
     if (params.workMode) httpParams = httpParams.set('workMode', params.workMode);
@@ -30,12 +30,9 @@ export class JobsService {
       httpParams = httpParams.append('technologies', tech);
     for (const lvl of params.level ?? []) httpParams = httpParams.append('level', lvl);
     if (params.sort) httpParams = httpParams.set('sort', params.sort);
+    if (cursor) httpParams = httpParams.set('cursor', cursor);
 
-    return this.http
-      .get<{ data: Job[]; total: number; page: number; limit: number }>(`${this.apiUrl}/jobs`, {
-        params: httpParams,
-      })
-      .pipe(map((res) => res.data));
+    return this.http.get<JobPage>(`${this.apiUrl}/jobs`, { params: httpParams });
   }
 
   getJobById(id: string): Observable<Job> {

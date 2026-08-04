@@ -19,7 +19,7 @@ const jobsQuerySchema = z.object({
   technologies: z.preprocess(splitList, z.array(z.string()).optional()),
   level: z.preprocess(splitList, z.array(z.enum(['junior', 'mid', 'senior'])).optional()),
   sort: z.enum(['newest', 'salary_asc', 'salary_desc']).default('newest'),
-  page: z.coerce.number().int().min(1).default(1),
+  cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(50).default(10),
 });
 
@@ -27,11 +27,41 @@ const batchSchema = z.object({
   ids: z.array(z.string().uuid()).min(1).max(100),
 });
 
-const sortClause = {
-  newest: 'posted_at DESC',
-  salary_asc: 'salary_min ASC',
-  salary_desc: 'salary_min DESC',
+const sortField = {
+  newest: 'posted_at',
+  salary_asc: 'salary_min',
+  salary_desc: 'salary_min',
 } as const;
+
+const sortDirection = {
+  newest: 'DESC',
+  salary_asc: 'ASC',
+  salary_desc: 'DESC',
+} as const;
+
+const cursorOperator = {
+  newest: '<',
+  salary_asc: '>',
+  salary_desc: '<',
+} as const;
+
+type Cursor = { v: string | number; id: string };
+
+function encodeCursor(value: string | number, id: string): string {
+  return Buffer.from(JSON.stringify({ v: value, id })).toString('base64url');
+}
+
+function decodeCursor(raw: string): Cursor {
+  return JSON.parse(Buffer.from(raw, 'base64url').toString('utf8')) as Cursor;
+}
+
+function decodeCursorSafe(raw: string): Cursor {
+  try {
+    return decodeCursor(raw);
+  } catch {
+    throw new HttpError(400, 'Invalid cursor');
+  }
+}
 
 export const jobsRouter = Router();
 
@@ -73,20 +103,29 @@ jobsRouter.get('/', async (req, res) => {
     values.push(q.level);
   }
 
-  const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-  const offset = (q.page - 1) * q.limit;
+  const cursor = q.cursor ? decodeCursorSafe(q.cursor) : null;
+  if (cursor) {
+    conditions.push(
+      `(${sortField[q.sort]}, id) ${cursorOperator[q.sort]} ($${values.length + 1}, $${values.length + 2})`,
+    );
+    values.push(cursor.v, cursor.id);
+  }
 
-  const [{ total }] = await query<{ total: number }>(
-    `SELECT COUNT(*)::int AS total FROM jobs ${where}`,
-    values,
-  );
+  const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+  const orderBy = `${sortField[q.sort]} ${sortDirection[q.sort]}, id ${sortDirection[q.sort]}`;
+
   const rows = await query<JobRow>(
     `SELECT j.*, (SELECT c.slug FROM companies c WHERE c.id = j.company_id) AS company_slug
-     FROM jobs j ${where} ORDER BY ${sortClause[q.sort]} LIMIT $${values.length + 1} OFFSET $${values.length + 2}`,
-    [...values, q.limit, offset],
+     FROM jobs j ${where} ORDER BY ${orderBy} LIMIT $${values.length + 1}`,
+    [...values, q.limit + 1],
   );
 
-  res.json({ data: rows.map(toJob), total, page: q.page, limit: q.limit });
+  const hasMore = rows.length > q.limit;
+  const page = rows.slice(0, q.limit);
+  const last = page[page.length - 1];
+  const nextCursor = hasMore && last ? encodeCursor(last[sortField[q.sort]], last.id) : null;
+
+  res.json({ data: page.map(toJob), nextCursor, hasMore });
 });
 
 jobsRouter.post('/batch', async (req, res) => {

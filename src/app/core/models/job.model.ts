@@ -16,6 +16,12 @@ export interface Job {
   applyUrl?: string;
 }
 
+export interface JobPage {
+  data: Job[];
+  nextCursor: string | null;
+  hasMore: boolean;
+}
+
 export interface JobsQueryParams {
   search?: string;
   location?: string;

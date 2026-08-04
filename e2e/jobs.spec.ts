@@ -58,4 +58,27 @@ test.describe('Jobs list', () => {
     await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Apply Now' })).toBeVisible();
   });
+
+  test('loads more jobs on scroll without duplicates', async ({ page }) => {
+    await page.goto('/jobs');
+
+    const cards = page.getByRole('article');
+    await expect(cards.first()).toBeVisible();
+    const initialCount = await cards.count();
+
+    await page.evaluate(async () => {
+      const scrollUntilLoaded = async () => {
+        for (let i = 0; i < 30; i++) {
+          window.scrollTo(0, document.body.scrollHeight);
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+      };
+      await scrollUntilLoaded();
+    });
+
+    await expect.poll(() => cards.count()).toBeGreaterThan(initialCount);
+
+    const titles = await cards.locator('h3').allTextContents();
+    expect(titles.length).toBe(new Set(titles).size);
+  });
 });
