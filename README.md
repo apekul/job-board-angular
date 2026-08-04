@@ -100,7 +100,7 @@ All private endpoints return `401` without a valid `Authorization: Bearer <token
 ## Testing
 
 ```bash
-# Unit tests (vitest)
+# Unit tests (vitest + Angular Testing Library) - services (jobs, favorites, auth) + components (job-card, search-bar, filters, favorite-button, favorites page)
 npx ng test --watch=false
 
 # E2E (Playwright) - expects backend on :4000 and frontend on :4200
@@ -117,4 +117,4 @@ GitHub Actions runs formatting check, backend typecheck, unit tests, build and P
 
 ## Project tracking
 
-Planned and implemented via [GitHub Issues](https://github.com/apekul/job-board-angular/issues). Implemented: #14 auth + server favorites, #16 E2E + CI, #17 application tracking, #19 infinite scroll / cursor pagination, #20 dark mode, #21 company pages. Remaining: #15 AI match, #18 job alerts, #22 unit tests, #23 API hardening, #24 PWA.
+Planned and implemented via [GitHub Issues](https://github.com/apekul/job-board-angular/issues). Implemented: #14 auth + server favorites, #16 E2E + CI, #17 application tracking, #19 infinite scroll / cursor pagination, #20 dark mode, #21 company pages, #22 unit tests (services + components). Remaining: #15 AI match, #18 job alerts, #23 API hardening, #24 PWA.
