@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { query } from '../db/index.js';
 import { toJob, type JobRow } from '../db/schema.js';
 import { HttpError } from '../middleware/errorHandler.js';
+import { buildJobsWhere } from '../lib/jobFilters.js';
 
 function splitList(value: unknown) {
   if (Array.isArray(value)) return value;
@@ -68,42 +69,10 @@ export const jobsRouter = Router();
 jobsRouter.get('/', async (req, res) => {
   const q = jobsQuerySchema.parse(req.query);
 
-  const conditions: string[] = [];
-  const values: unknown[] = [];
-
-  if (q.search) {
-    const like = `%${q.search}%`;
-    conditions.push(
-      `(title ILIKE $${values.length + 1} OR company ILIKE $${values.length + 2} OR EXISTS (SELECT 1 FROM unnest(technologies) t WHERE t ILIKE $${values.length + 3}))`,
-    );
-    values.push(like, like, like);
-  }
-  if (q.location) {
-    conditions.push(`location ILIKE $${values.length + 1}`);
-    values.push(`%${q.location}%`);
-  }
-  if (q.workMode) {
-    conditions.push(`work_mode = $${values.length + 1}`);
-    values.push(q.workMode);
-  }
-  if (q.salaryMin !== undefined) {
-    conditions.push(`salary_max >= $${values.length + 1}`);
-    values.push(q.salaryMin);
-  }
-  if (q.salaryMax !== undefined) {
-    conditions.push(`salary_min <= $${values.length + 1}`);
-    values.push(q.salaryMax);
-  }
-  if (q.technologies?.length) {
-    conditions.push(`technologies && $${values.length + 1}::text[]`);
-    values.push(q.technologies);
-  }
-  if (q.level?.length) {
-    conditions.push(`level = ANY($${values.length + 1}::text[])`);
-    values.push(q.level);
-  }
+  const { where: filtersWhere, values } = buildJobsWhere(q);
 
   const cursor = q.cursor ? decodeCursorSafe(q.cursor) : null;
+  const conditions: string[] = [];
   if (cursor) {
     conditions.push(
       `(${sortField[q.sort]}, id) ${cursorOperator[q.sort]} ($${values.length + 1}, $${values.length + 2})`,
@@ -111,7 +80,10 @@ jobsRouter.get('/', async (req, res) => {
     values.push(cursor.v, cursor.id);
   }
 
-  const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+  const where =
+    filtersWhere || conditions.length
+      ? `WHERE ${[filtersWhere.replace(/^WHERE\s+/, ''), ...conditions].filter(Boolean).join(' AND ')}`
+      : '';
   const orderBy = `${sortField[q.sort]} ${sortDirection[q.sort]}, id ${sortDirection[q.sort]}`;
 
   const rows = await query<JobRow>(

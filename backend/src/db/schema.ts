@@ -75,6 +75,26 @@ export const CREATE_APPLICATION_EVENTS_TABLE = `
   );
 `;
 
+export const CREATE_JOB_ALERTS_TABLE = `
+  CREATE TABLE IF NOT EXISTS job_alerts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    filters JSONB NOT NULL DEFAULT '{}',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+`;
+
+export const CREATE_ALERT_NOTIFICATIONS_TABLE = `
+  CREATE TABLE IF NOT EXISTS alert_notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    alert_id UUID NOT NULL REFERENCES job_alerts(id) ON DELETE CASCADE,
+    job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+    sent_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (alert_id, job_id)
+  );
+`;
+
 export const APPLICATION_STATUSES = ['applied', 'interview', 'offer', 'rejected'] as const;
 export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
 
@@ -129,6 +149,14 @@ export interface UserRow {
   email: string;
   name: string | null;
   password_hash: string;
+  created_at: string;
+}
+
+export interface JobAlertRow {
+  id: string;
+  user_id: string;
+  name: string;
+  filters: Record<string, unknown>;
   created_at: string;
 }
 

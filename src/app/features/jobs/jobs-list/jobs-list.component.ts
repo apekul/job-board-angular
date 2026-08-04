@@ -11,6 +11,8 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { JobsService } from '../../../core/services/jobs.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { AlertsService } from '../../../core/services/alerts.service';
 import { Job, JobsQueryParams } from '../../../core/models/job.model';
 import { JobCardComponent } from '../../../shared/job-card/job-card.component';
 import { FiltersComponent } from '../filters/filters.component';
@@ -25,12 +27,15 @@ export class JobsListComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private jobsService = inject(JobsService);
+  private authService = inject(AuthService);
+  private alertsService = inject(AlertsService);
 
   jobs = signal<Job[]>([]);
   loading = signal(true);
   loadingMore = signal(false);
   error = signal<string | null>(null);
   hasMore = signal(false);
+  alertState = signal<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   private nextCursor: string | null = null;
   private loadGen = 0;
@@ -85,6 +90,29 @@ export class JobsListComponent {
       queryParams: serialized,
       queryParamsHandling: 'replace',
     });
+  }
+
+  saveAlert() {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+
+    const filters = this.currentFilters();
+    this.alertState.set('saving');
+    this.alertsService.create(this.alertName(filters), filters).subscribe({
+      next: () => this.alertState.set('saved'),
+      error: () => this.alertState.set('error'),
+    });
+  }
+
+  private alertName(filters: JobsQueryParams): string {
+    const parts: string[] = [];
+    if (filters.search) parts.push(filters.search);
+    if (filters.location) parts.push(filters.location);
+    if (filters.technologies?.length) parts.push(filters.technologies[0]);
+    if (filters.level?.length) parts.push(filters.level[0]);
+    return parts.length ? parts.join(' · ') : 'All jobs';
   }
 
   private loadFirstPage(params: JobsQueryParams) {
