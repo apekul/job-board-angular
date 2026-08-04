@@ -1,8 +1,15 @@
-import { Component, computed, inject, signal, effect } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  effect,
+  afterNextRender,
+  viewChild,
+  ElementRef,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { switchMap } from 'rxjs/operators';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { JobsService } from '../../../core/services/jobs.service';
 import { Job, JobsQueryParams } from '../../../core/models/job.model';
 import { JobCardComponent } from '../../../shared/job-card/job-card.component';
@@ -21,7 +28,15 @@ export class JobsListComponent {
 
   jobs = signal<Job[]>([]);
   loading = signal(true);
+  loadingMore = signal(false);
   error = signal<string | null>(null);
+  hasMore = signal(false);
+
+  private nextCursor: string | null = null;
+  private loadGen = 0;
+  private observer: IntersectionObserver | null = null;
+
+  sentinel = viewChild.required<ElementRef<HTMLDivElement>>('sentinel');
 
   private queryParams = toSignal(this.route.queryParamMap, {
     initialValue: this.route.snapshot.queryParamMap,
@@ -44,22 +59,21 @@ export class JobsListComponent {
   });
 
   constructor() {
+    afterNextRender(() => {
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) this.loadMore();
+        },
+        { rootMargin: '400px 0px' },
+      );
+      this.observer.observe(this.sentinel().nativeElement);
+    });
+
     effect(() => {
       const raw = this.queryParams();
       const params = this.deserializeParams(raw);
       this.currentFilters.set(params);
-      this.loading.set(true);
-      this.error.set(null);
-      this.jobsService.getJobs(params).subscribe({
-        next: (jobs) => {
-          this.jobs.set(jobs);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.error.set('Failed to load jobs. Please try again.');
-          this.loading.set(false);
-        },
-      });
+      this.loadFirstPage(params);
     });
   }
 
@@ -70,6 +84,57 @@ export class JobsListComponent {
       relativeTo: this.route,
       queryParams: serialized,
       queryParamsHandling: 'replace',
+    });
+  }
+
+  private loadFirstPage(params: JobsQueryParams) {
+    const gen = ++this.loadGen;
+    this.nextCursor = null;
+    this.hasMore.set(false);
+    this.jobs.set([]);
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.jobsService.getJobs(params).subscribe({
+      next: (page) => {
+        if (gen !== this.loadGen) return;
+        this.jobs.set(page.data);
+        this.nextCursor = page.nextCursor;
+        this.hasMore.set(page.hasMore);
+        this.loading.set(false);
+      },
+      error: () => {
+        if (gen !== this.loadGen) return;
+        this.error.set('Failed to load jobs. Please try again.');
+        this.loading.set(false);
+      },
+    });
+  }
+
+  private loadMore() {
+    if (this.loading() || this.loadingMore() || !this.hasMore() || this.error()) return;
+
+    this.loadingMore.set(true);
+    const gen = this.loadGen;
+    this.jobsService.getJobs(this.currentFilters(), this.nextCursor).subscribe({
+      next: (page) => {
+        if (gen !== this.loadGen) return;
+        this.appendJobs(page.data);
+        this.nextCursor = page.nextCursor;
+        this.hasMore.set(page.hasMore);
+        this.loadingMore.set(false);
+      },
+      error: () => {
+        if (gen !== this.loadGen) return;
+        this.loadingMore.set(false);
+      },
+    });
+  }
+
+  private appendJobs(next: Job[]) {
+    this.jobs.update((current) => {
+      const seen = new Set(current.map((job) => job.id));
+      return [...current, ...next.filter((job) => !seen.has(job.id))];
     });
   }
 

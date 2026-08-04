@@ -18,7 +18,7 @@ A job board app inspired by JustJoinIT. Full-stack project: Angular + TailwindCS
 
 ## Features
 
-- Job listings with cards (company logo, salary, technologies, level, work mode, relative date)
+- Job listings with cards (company logo, salary, technologies, level, work mode, relative date) and infinite scroll (cursor-based pagination, no duplicates on load more)
 - Search and filters (location, work mode, salary range, technologies, level, sort) synced with the URL, search bar in the header (desktop center, mobile own row)
 - Job detail pages with "Apply" link
 - Company pages (`/companies/:slug`) with logo, description and job listings; company name is a link from job cards/details; pages are prerendered (SEO)
@@ -79,7 +79,7 @@ The frontend expects the API at `http://localhost:4000/api` (configurable in `sr
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/jobs` | List with filters + pagination (`search`, `location`, `workMode`, `salaryMin`, `salaryMax`, `technologies`, `level`, `sort`, `page`, `limit`) |
+| GET | `/api/jobs` | List with filters + cursor pagination (`search`, `location`, `workMode`, `salaryMin`, `salaryMax`, `technologies`, `level`, `sort`, `cursor`, `limit`) → `{ data, nextCursor, hasMore }` |
 | GET | `/api/jobs/:id` | Job detail (400 for invalid UUID, 404 if missing) |
 | POST | `/api/jobs/batch` | Fetch jobs by `{ ids: string[] }` |
 | GET | `/api/technologies` | Distinct technologies for filter chips |
@@ -117,4 +117,4 @@ GitHub Actions runs formatting check, backend typecheck, unit tests, build and P
 
 ## Project tracking
 
-Planned and implemented via [GitHub Issues](https://github.com/apekul/job-board-angular/issues). Implemented: #14 auth + server favorites, #16 E2E + CI, #17 application tracking, #20 dark mode, #21 company pages. Remaining: #15 AI match, #18 job alerts, #19 infinite scroll, #22 unit tests, #23 API hardening, #24 PWA.
+Planned and implemented via [GitHub Issues](https://github.com/apekul/job-board-angular/issues). Implemented: #14 auth + server favorites, #16 E2E + CI, #17 application tracking, #19 infinite scroll / cursor pagination, #20 dark mode, #21 company pages. Remaining: #15 AI match, #18 job alerts, #22 unit tests, #23 API hardening, #24 PWA.

@@ -70,6 +70,22 @@
           }
         </div>
       }
+
+      <!-- Infinite scroll sentinel -->
+      <div #sentinel data-testid="jobs-sentinel" class="flex justify-center py-8">
+        @if (loadingMore()) {
+          <div
+            class="flex items-center gap-3 text-gray-500 text-sm dark:text-gray-400"
+            role="status"
+            aria-live="polite"
+          >
+            <span
+              class="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin dark:border-gray-700 dark:border-t-blue-500"
+            ></span>
+            <span>Loading more jobs...</span>
+          </div>
+        }
+      </div>
     </div>
   </div>
 </div>
