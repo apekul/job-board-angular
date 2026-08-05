@@ -1,12 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
 import { AlertsService } from '../../core/services/alerts.service';
 import { JobAlert, JobAlertFilters } from '../../core/models/alert.model';
 
 @Component({
   selector: 'app-alerts',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe],
   templateUrl: './alerts.component.html',
 })
 export class AlertsComponent {
