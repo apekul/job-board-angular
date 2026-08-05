@@ -25,6 +25,7 @@ A job board app inspired by JustJoinIT. Full-stack project: Angular + TailwindCS
 - User accounts: registration/login with bcrypt + JWT (7d), `/login`, `/register`
 - Favorites on the server (heart button, count badge in header, `/favorites` page, guarded)
 - Application tracking: "Apply" creates an application, statuses (`applied` / `interview` / `offer` / `rejected`) editable with a history timeline on `/applications`
+- Job alerts (`/alerts`): users save filters under a name; a scheduled worker matches new offers and emails them daily
 - Dark mode toggle (sun/moon in the header) with persistence in `localStorage` and auto-detect from `prefers-color-scheme` (no FOUC)
 - Full-width, responsive layout
 
@@ -40,15 +41,18 @@ src/app/
     applications/ # application tracking page
     companies/    # company profile pages
     auth/         # login + register
+    alerts/       # saved job alerts page
   layouts/        # header, footer, main layout
 e2e/              # Playwright E2E specs
-.github/workflows/ci.yml   # GitHub Actions CI
+.github/workflows/ci.yml      # GitHub Actions CI
+.github/workflows/alerts.yml  # daily scheduled alerts worker (GitHub Actions)
 backend/
   src/
     db/           # schema + connection
-    routes/       # jobs, technologies, auth, favorites, applications, companies
+    routes/       # jobs, technologies, auth, favorites, applications, companies, alerts
     middleware/   # error handler
     lib/          # auth helpers (bcrypt, JWT, requireAuth)
+    alerts/       # worker.ts - daily matching + email sending
     seed.ts       # seeds 22 sample jobs + companies
 ```
 
@@ -61,7 +65,7 @@ Prerequisites: Node.js >= 20, a PostgreSQL database (e.g. free [Neon](https://ne
 ```bash
 cd backend
 npm install
-cp .env.example .env    # set DATABASE_URL, FRONTEND_URL, JWT_SECRET
+create .env    # set DATABASE_URL, FRONTEND_URL, JWT_SECRET
 npm run seed            # create tables + seed 22 jobs and companies
 npm run dev             # http://localhost:4000
 ```
@@ -94,6 +98,9 @@ The frontend expects the API at `http://localhost:4000/api` (configurable in `sr
 | PATCH | `/api/applications/:id` | Update status `{ status }` and append history event (auth required) |
 | GET | `/api/companies` | Company list with open position counts |
 | GET | `/api/companies/:id` | Company detail with its jobs (match by id or slug, 404 if missing) |
+| GET | `/api/alerts` | User's saved job alerts (auth required) |
+| POST | `/api/alerts` | Save an alert `{ name, filters }` (auth required, 201) |
+| DELETE | `/api/alerts/:id` | Delete an alert (auth required, 404 if not owned) |
 
 All private endpoints return `401` without a valid `Authorization: Bearer <token>` header.
 
@@ -115,6 +122,26 @@ GitHub Actions runs formatting check, backend typecheck, unit tests, build and P
 - **Render** — backend (root directory `backend`, start `node dist/index.js`). Env: `DATABASE_URL`, `FRONTEND_URL`, `JWT_SECRET`.
 - **Neon** — managed PostgreSQL
 
+## Job alerts
+
+Users save job alerts (`/alerts` page) with the same filters as the jobs list. A GitHub Actions workflow (`.github/workflows/alerts.yml`) runs daily at 06:00 UTC (`workflow_dispatch` also available) and executes `backend/src/alerts/worker.ts`, which:
+
+1. Finds saved alerts and matches them against new jobs (jobs not already notified for that alert)
+2. Records matches in `alert_notifications` (dedup — each job is emailed once per alert)
+3. Sends a summary email via Resend
+
+The worker needs these GitHub Actions **secrets** (Settings → Secrets and variables → Actions):
+
+| Secret | What it is | Where to get it |
+|---|---|---|
+| `DATABASE_URL` | PostgreSQL connection string (the same as the production `DATABASE_URL`) | Neon console → project → Connection Details, or copy from Render env vars |
+| `RESEND_API_KEY` | Resend API key for sending emails | https://resend.com → API Keys → Create API Key (Full access) |
+| `ALERT_EMAIL_FROM` | Sender address, e.g. `Job Board <alerts@your-domain.com>` | Must be in a domain verified in Resend (https://resend.com → Domains); without a verified domain, emails are not delivered |
+
+If either `RESEND_API_KEY` or `ALERT_EMAIL_FROM` is missing, the worker runs but skips sending (recorded matches are still saved).
+
+`ALERT_DAILY_LIMIT` (default `100`) caps how many emails the worker sends per day.
+
 ## Project tracking
 
-Planned and implemented via [GitHub Issues](https://github.com/apekul/job-board-angular/issues). Implemented: #14 auth + server favorites, #16 E2E + CI, #17 application tracking, #19 infinite scroll / cursor pagination, #20 dark mode, #21 company pages, #22 unit tests (services + components), #23 API hardening (rate limiting + cache). Remaining: #15 AI match, #18 job alerts.
+Planned and implemented via [GitHub Issues](https://github.com/apekul/job-board-angular/issues). Implemented: #14 auth + server favorites, #16 E2E + CI, #17 application tracking, #19 infinite scroll / cursor pagination, #20 dark mode, #21 company pages, #22 unit tests (services + components), #23 API hardening (rate limiting + cache), #18 job alerts. Remaining: #15 AI match.

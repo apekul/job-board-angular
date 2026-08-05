@@ -21,8 +21,8 @@ function describeFilters(filters: Record<string, unknown>): string {
 
 async function sendEmail(to: string, subject: string, html: string): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.ALERT_EMAIL_FROM ?? 'Job Board <alerts@example.com>';
-  if (!apiKey) return false;
+  const from = process.env.ALERT_EMAIL_FROM;
+  if (!apiKey || !from) return false;
 
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -106,7 +106,7 @@ async function main() {
     const sent = await sendEmail(alert.email, `New matching job offers (${jobs.length})`, html);
     if (sent) emailed++;
     console.log(
-      `[alerts] alert "${alert.name}" (${alert.email}): ${jobs.length} new job(s), email ${sent ? 'sent' : 'skipped (no RESEND_API_KEY)'}`,
+      `[alerts] alert "${alert.name}" (${alert.email}): ${jobs.length} new job(s), email ${sent ? 'sent' : 'skipped (missing RESEND_API_KEY or ALERT_EMAIL_FROM)'}`,
     );
   }
 
