@@ -65,7 +65,7 @@ Prerequisites: Node.js >= 20, a PostgreSQL database (e.g. free [Neon](https://ne
 ```bash
 cd backend
 npm install
-cp .env.example .env    # set DATABASE_URL, FRONTEND_URL, JWT_SECRET
+create .env    # set DATABASE_URL, FRONTEND_URL, JWT_SECRET
 npm run seed            # create tables + seed 22 jobs and companies
 npm run dev             # http://localhost:4000
 ```
