@@ -42,6 +42,12 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'alerts',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/alerts/alerts.component').then((m) => m.AlertsComponent),
+      },
+      {
         path: 'login',
         loadComponent: () =>
           import('./features/auth/login.component').then((m) => m.LoginComponent),

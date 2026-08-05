@@ -8,6 +8,8 @@ import {
   CREATE_FAVORITES_TABLE,
   CREATE_APPLICATIONS_TABLE,
   CREATE_APPLICATION_EVENTS_TABLE,
+  CREATE_JOB_ALERTS_TABLE,
+  CREATE_ALERT_NOTIFICATIONS_TABLE,
   ALTER_JOBS_ADD_COMPANY_ID,
 } from './db/schema.js';
 
@@ -317,6 +319,8 @@ async function main() {
   await pool.query(CREATE_FAVORITES_TABLE);
   await pool.query(CREATE_APPLICATIONS_TABLE);
   await pool.query(CREATE_APPLICATION_EVENTS_TABLE);
+  await pool.query(CREATE_JOB_ALERTS_TABLE);
+  await pool.query(CREATE_ALERT_NOTIFICATIONS_TABLE);
   await pool.query('DELETE FROM jobs');
 
   const companyNames = [...new Set(jobs.map((job) => job.company))];

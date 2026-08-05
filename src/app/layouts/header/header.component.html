@@ -39,6 +39,12 @@
             class="text-gray-300 hover:text-white transition-colors whitespace-nowrap"
             >Applications</a
           >
+          <a
+            routerLink="/alerts"
+            routerLinkActive="text-emerald-400"
+            class="text-gray-300 hover:text-white transition-colors whitespace-nowrap"
+            >Alerts</a
+          >
         }
         @if (isAuthenticated()) {
           <button
@@ -153,6 +159,13 @@
           class="text-gray-300 hover:text-white transition-colors"
           (click)="toggleMenu()"
           >Applications</a
+        >
+        <a
+          routerLink="/alerts"
+          routerLinkActive="text-emerald-400"
+          class="text-gray-300 hover:text-white transition-colors"
+          (click)="toggleMenu()"
+          >Alerts</a
         >
       }
       @if (isAuthenticated()) {

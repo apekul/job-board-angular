@@ -8,6 +8,7 @@ import { technologiesRouter } from './routes/technologies.js';
 import { authRouter } from './routes/auth.js';
 import { favoritesRouter } from './routes/favorites.js';
 import { applicationsRouter } from './routes/applications.js';
+import { alertsRouter } from './routes/alerts.js';
 import { companiesRouter } from './routes/companies.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
@@ -47,6 +48,7 @@ app.use('/api/jobs', jobsRouter);
 app.use('/api/technologies', technologiesRouter);
 app.use('/api/favorites', favoritesRouter);
 app.use('/api/applications', applicationsRouter);
+app.use('/api/alerts', alertsRouter);
 app.use('/api/companies', companiesRouter);
 
 app.use((_req, res) => {

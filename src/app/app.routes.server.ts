@@ -8,6 +8,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'register', renderMode: RenderMode.Client },
   { path: 'favorites', renderMode: RenderMode.Client },
   { path: 'applications', renderMode: RenderMode.Client },
+  { path: 'alerts', renderMode: RenderMode.Client },
   {
     path: 'companies/:slug',
     renderMode: RenderMode.Prerender,
