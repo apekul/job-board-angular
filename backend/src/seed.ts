@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { pool, query } from './db/index.js';
+import { invalidateCache } from './lib/cache.js';
 import {
   CREATE_COMPANIES_TABLE,
   CREATE_JOBS_TABLE,
@@ -362,6 +363,10 @@ async function main() {
 
   const { rows } = await pool.query<{ count: string }>('SELECT COUNT(*)::text AS count FROM jobs');
   console.log(`Seeded ${rows[0].count} jobs.`);
+
+  await invalidateCache('jobs');
+  console.log('Jobs cache invalidated.');
+
   await pool.end();
 }
 
