@@ -138,6 +138,8 @@ The worker needs these GitHub Actions **secrets** (Settings → Secrets and vari
 | `RESEND_API_KEY` | Resend API key for sending emails | https://resend.com → API Keys → Create API Key (Full access) |
 | `ALERT_EMAIL_FROM` | Sender address, e.g. `Job Board <alerts@your-domain.com>` | Must be in a domain verified in Resend (https://resend.com → Domains); without a verified domain, emails are not delivered |
 
+If either `RESEND_API_KEY` or `ALERT_EMAIL_FROM` is missing, the worker runs but skips sending (recorded matches are still saved).
+
 `ALERT_DAILY_LIMIT` (default `100`) caps how many emails the worker sends per day.
 
 ## Project tracking
